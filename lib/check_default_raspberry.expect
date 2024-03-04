@@ -1,0 +1,47 @@
+#!/usr/bin/expect -f
+
+# Set the username to switch to
+set username [lindex $argv 0]
+
+# Set the password you expect to use
+set password "raspberry"
+
+# Timeout for expect command to wait for an output
+set timeout 10
+
+# Start the su command to switch user
+spawn su - $username
+
+# Wait for the password prompt
+expect {
+  "does not exist" {
+    puts "The user $username does not exist."
+  }
+
+  "Password:" {
+
+    # Send the password
+    send "$password\r"
+
+    # Wait for a shell prompt or an authentication failure message
+    expect {
+      # If the password is correct, attempt to run a command
+      "*\$ " {
+          send "echo 'The password is raspberry'\r"
+          expect "*\$ "
+          send "exit\r"
+          puts "Password verification succeeded, but remember to change the default password!"
+          exit 1
+      }
+      "Authentication failure" {
+          puts "Good job! The password is not the default."
+      }
+    }
+  }
+  default {
+    puts "An unexpected error occurred."
+  }
+}
+
+# End the script
+expect eof
