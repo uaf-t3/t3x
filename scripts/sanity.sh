@@ -4,7 +4,6 @@ t3ize_sh="${0%/*}/../lib/t3ize.sh"
 source "$t3ize_sh"
 
 echo "sanity.sh"
-boom "stop sanity check"
 apt_install "figlet"
 apt_install "toilet"
 apt_install "cowsay"
