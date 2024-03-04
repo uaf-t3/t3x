@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+t3ize_sh="${0%/*}/../lib/t3ize.sh"
+source "$t3ize_sh"
+
+case "$1" in
+  -h|--help)
+    echo "usage: t3x COMMAND [ARGS]"
+    exit
+    ;;
+  -V|--version)
+    echo "t3ize version $T3IZE_VERSION"
+    exit
+    ;;
+esac
+
+
+yak "Starting t3x : T3IZE_SCRIPTS_DIR=$T3IZE_SCRIPTS_DIR   T3IZE_LIB_DIR=$T3IZE_LIB_DIR"  
+if (( $# == 0 )); then
+  boom "No command given to execute. Exiting."
+fi
+
+# take the first argument as the command to execute
+# check in the scripts folder for a script of the same name as the command
+# if it exists, execute it
+command=$1
+shift
+script="$T3IZE_SCRIPTS_DIR/$command.sh"
+echo "script=$script"
+echo "hi - I want to run: $script $@"
+
+if [ -f "$script" ]; then
+  echo "running script $script"
+  $script $@
+else
+    if declare -f "$command" > /dev/null; then
+        echo "running function $command"
+        $command $@
+    else
+        echo "no function found for $command"
+    fi
+fi
+
+
+# if it doesn't exist, check for a function of the same name in the t3ize.sh file
+# if it exists, execute it
+
+
