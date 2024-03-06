@@ -1,14 +1,42 @@
 #!/usr/bin/env bash
+t3ize_sh="${0%/*}/../lib/t3ize.sh"
+source "$t3ize_sh"
 
 # Change Wallpaper
 IMAGE_URL="https://raw.githubusercontent.com/ItalianSquirel/T3-RPi-Image/main/Assets/Wallpapers/t3wallpaper.png"
-WALLPAPER_PATH="/usr/share/rpd-wallpaper/"
+
+if [ -d $HOME/Pictures ]; then
+  WALLPAPER_DIR=$HOME/Pictures
+else
+  WALLPAPER_DIR="$HOME/.local/share/rpx/"
+fi
+
+WALLPAPER_FILE="$WALLPAPER_DIR/$(basename $IMAGE_URL)"
+
+info "Downloading T3 Wallpaper"
+if [ ! -d $WALLPAPER_DIR ]; then
+  run "mkdir -p $WALLPAPER_DIR"
+fi
 
 # Download the image file to the Raspberry Pi
-sudo wget -O $WALLPAPER_PATH"wallpaper.jpg" $IMAGE_URL
+require_command wget
+wget -q -O $WALLPAPER_FILE "$IMAGE_URL"
+if [ $? -eq 0 ]; then
+  yak "T3X wallpaper download success"
+else
+  boom "Download of wallpaper failed"
+fi
 
-# Set the image file as the wallpaper
-pcmanfm --set-wallpaper=$WALLPAPER_PATH"wallpaper.jpg"
+if got_command pcmanfm; then
+  yak "pcmanfm command found - settign the image file as the wallpaper"
+  pcmanfm --set-wallpaper="$WALLPAPER_FILE"
+  yak "Refresh the desktop to show the new wallpaper"
+  pcmanfm -w /
+  cowsay "Look at that" | lolcat
+else
+  warning "pcmanfm command not found - skipping applying of wallpaper"
+  cowsay "Manual wallpaper install time"
+  warning "New wallpaper location: $WALLPAPER_FILE"
+fi
 
-# Refresh the desktop to show the new wallpaper
-pcmanfm -w /
+exit 0
