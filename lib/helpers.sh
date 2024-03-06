@@ -8,14 +8,22 @@ function error {
   sleep 1
 }
 
-function warning {
+function warn {
   echo -e "\e[93m${1}\e[0m"
   sleep 0.5
 }
 
+# export T3X_DEBUG=true # to cause info messages to show up
+function debug {
+  if [ "$T3X_DEBUG" != false ]; then
+    echo "# INFO: ${1}"
+    sleep 0.1
+  fi
+}
+
+
 function info {
-  echo -e "\e[32m${1}\e[0m"
-  sleep 0.1
+    echo -e "\e[32m${1}\e[0m"
 }
 
 
@@ -79,14 +87,19 @@ function agree() {
 }
 
 function run() {
-  info "#run(): $1 # START"
+  info "#run() START: $1"
   sleep 0.4
+  if [ "$T3X_RUN" = "false" ]; then
+    info "#T3X_RUN=false: $1 # fake success"
+    info "#run()  FAKE: $1"
+    return 0
+  fi
   $1
   RETVAL=$?
   if [ $RETVAL -eq 0 ]; then
-    info "#run(): $1 # COMPLETE"
+    info "#run()  DONE: $1"
   else
-    warn "#run(): $1 # FAILED"
+    warn "#run()  FAIL: $1"
   fi
   return $RETVAL;
 }
@@ -138,31 +151,4 @@ function require_root
 		boom "this script requires root - please run with sudo"
 		exit 1
 	fi
-}
-
-function d.pico-lol() {
-  require_command curl
-  require_command jq
-  require_command figlet
-  require_command lolcat
-  clear
-  sleep 0.2
-  figlet "d.pico" | lolcat
-  sleep 0.5
-}
-
-function setup_d.pico() {
-  #echo source $(dirname "${BASH_SOURCE[0]}")/env.sh
-  source $(dirname "${BASH_SOURCE[0]}")/env.sh
-  export SCRIPT_CACHE_DIR
-
-  if [ ! -d $SCRIPT_CACHE_DIR ]; then                               
-    warning "SCRIPT_CACHE_DIR does not exist: $SCRIPT_CACHE_DIR"    
-    ensure_mkdir "$SCRIPT_CACHE_DIR"                                
-  fi                                       
-
-  if [ -f $SCRIPT_CACHE_DIR ]; then
-     source $SCRIPT_CACHE_DIR/.uf2_picoruby
-     export 
-  fi
 }
