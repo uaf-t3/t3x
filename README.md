@@ -1,7 +1,8 @@
 # t3alaska-rpi-bootstrap
 The cuddly waffle toolset for T3 Raspberry Pi image creation & maintance.
 
-> TODO words
+> TODO words that set context of this project and it's role in Alaska T3 program
+> & T3 Alliance RPi ecosystem
 
 ## Installation
 
@@ -16,18 +17,21 @@ need to be be able to eligible to be included under this license.
 
 | Permissions | Conditions | Limitations |
 | ----------- | ---------- | ----------- | 
-| :green_circle: Commercial Use | :blue_circule: License & copyright notice | :red_circle: Liability |
-| :green_circle: Distribution | :blue_circule: State changes | :red_circle: Trademark use |
+| :green_circle: Commercial Use | :blue_circle: License & copyright notice | :red_circle: Liability |
+| :green_circle: Distribution | :blue_circle: State changes | :red_circle: Trademark use |
 | :green_circle: Modification | :memo: | :red_circle: Warranty |
-| :green_circle: Patent use |  :blue_heart: |  :red_heart: |
+| :green_circle: Patent use |  :blue_heart: |  :heart: |
 | :green_circle: Private use | :paperclips: | :lady_beetle: |
 
 See the [LICENSE.md](LICENSE.MD) file for full license. 
 
-## Credits
+## Credits & Sponsors
+
+- TODO: List of inspired projects credits we leaned on (easybotics script)
+- TODO: List of funders or partners sponsoring development
 
 ## Contributors
 
-- [@dayne](https://github.com/dayne) - Architect of Innovation
+- [@dayne](https://github.com/dayne) - Innovaton Architect
 - [@ItalianSquirel](https://github.com/ItalianSquirel) - Code Conjurer
 - [@SushiFanta](https://github.com/SushiFanta) - Algorithm Alchemist
