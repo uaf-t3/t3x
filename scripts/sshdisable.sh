@@ -4,5 +4,5 @@ source "$t3ize_sh"
 
 #stop ssh and disable ssh on startup. Requires root privelege
 echo "attempting to disable ssh"
-systemctl stop ssh.service
-systemctl disable ssh.service
+sudo systemctl stop ssh.service
+sudo systemctl disable ssh.service
