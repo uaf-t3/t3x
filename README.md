@@ -17,11 +17,11 @@ need to be be able to eligible to be included under this license.
 
 | Permissions | Conditions | Limitations |
 | ----------- | ---------- | ----------- | 
-| :green_circle: Commercial Use | :blue_circle: License & copyright notice | :red_circle: Liability |
-| :green_circle: Distribution | :blue_circle: State changes | :red_circle: Trademark use |
-| :green_circle: Modification | :memo: | :red_circle: Warranty |
-| :green_circle: Patent use |  :blue_heart: |  :heart: |
-| :green_circle: Private use | :paperclips: | :lady_beetle: |
+| :green_circle: Commercial Use | :large_blue_circle: License & copyright notice | :red_circle: Liability |
+| :green_circle: Distribution   | :large_blue_circle: State changes | :red_circle: Trademark use |
+| :green_circle: Modification   | :memo:   | :red_circle: Warranty |
+| :green_circle: Patent use     | :scroll: | :heart:  |
+| :green_circle: Private use    | :mute:   | :blue_heart: |
 
 See the [LICENSE.md](LICENSE.MD) file for full license. 
 
