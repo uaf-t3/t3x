@@ -39,19 +39,19 @@ function yak() {
 }
 
 function apt_install() {
-  yak "apt_install $1"
-  dpkg -s $1 > /dev/null 2>&1
+  info "apt_install $1"
+  dpkg -s "$1" > /dev/null 2>&1
   if [ $? -eq 1 ]; then
-    yak "#> sudo apt-get install $1"
+    info "# sudo apt-get install $1"
     sleep 0.5 
-    sudo apt-get install -yq $1
+    sudo apt-get install -yq "$1"
   else
-    echo "#> already got the packages ... skipping install "
+    info "# packages installed .. skipping : $1"
   fi
 }
 
 function got_command() {
-  which $1 &> /dev/null
+  which "$1" &> /dev/null
   if [ $? -eq 1 ]; then
     echo "#>> missing command : $1"
     return 1
@@ -62,7 +62,7 @@ function got_command() {
 }
 
 function require_command() {
-  which $1 > /dev/null 2>&1
+  which "$1" > /dev/null 2>&1
   if [ $? -eq 1 ]; then
     if [ "$2" != "" ]; then
       echo "#>> missing command : $1"

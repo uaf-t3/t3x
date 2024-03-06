@@ -3,15 +3,10 @@
 t3ize_sh="${0%/*}/../lib/t3ize.sh"
 source "$t3ize_sh"
 
-echo "sanity.sh"
-apt_install "figlet"
-apt_install "toilet"
-apt_install "cowsay"
-apt_install "fortune"
-apt_install "lolcat"
-apt_install "jq"
-apt_install "curl"
-apt_install "git"
-apt_install "vim"
-apt_install "tmux"
-apt_install "htop"
+yak "sanity check initiated"
+apt_install "figlet toilet cowsay fortune lolcat"
+apt_install "jq curl git vim tmux htop"
+apt_install "pv"
+figlet "T3X" | lolcat
+
+echo -n "sanity check success"; sleep 1; echo " . . . we hope" | pv -qL 5 | lolcat
