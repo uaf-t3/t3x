@@ -1,4 +1,4 @@
-# t3alaska-rpi-bootstrap
+# T3X
 The cuddly waffle toolset for T3 Raspberry Pi image creation & maintance.
 
 > TODO words that set context of this project and it's role in Alaska T3 program
@@ -20,8 +20,8 @@ need to be be able to eligible to be included under this license.
 | :green_circle: Commercial Use | :large_blue_circle: License & copyright notice | :red_circle: Liability |
 | :green_circle: Distribution   | :large_blue_circle: State changes | :red_circle: Trademark use |
 | :green_circle: Modification   | :memo:   | :red_circle: Warranty |
-| :green_circle: Patent use     | :scroll: | :heart:  |
-| :green_circle: Private use    | :mute:   | :blue_heart: |
+| :green_circle: Patent use     | :scroll: | |
+| :green_circle: Private use    | :mute:   | |
 
 See the [LICENSE.md](LICENSE.MD) file for full license. 
 
@@ -32,6 +32,6 @@ See the [LICENSE.md](LICENSE.MD) file for full license.
 
 ## Contributors
 
-- [@dayne](https://github.com/dayne) - Innovaton Architect
-- [@ItalianSquirel](https://github.com/ItalianSquirel) - Code Conjurer
-- [@SushiFanta](https://github.com/SushiFanta) - Algorithm Alchemist
+- [@dayne](https://github.com/dayne) - T3X Innovaton Architect
+- [@ItalianSquirel](https://github.com/ItalianSquirel) - T3X Code Conjurer
+- [@SushiFanta](https://github.com/SushiFanta) - T3X Algorithm Alchemist
