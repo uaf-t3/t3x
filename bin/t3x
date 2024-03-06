@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# T3X_DEBUG=true # Enable debug messages
+# T3X_RUN=false  # disable running of commands (pretends success)
+
 t3ize_sh="${0%/*}/../lib/t3ize.sh"
 source "$t3ize_sh"
 
@@ -15,7 +18,7 @@ case "$1" in
 esac
 
 
-yak "Starting t3x : T3IZE_SCRIPTS_DIR=$T3IZE_SCRIPTS_DIR   T3IZE_LIB_DIR=$T3IZE_LIB_DIR"  
+debug "t3x : T3IZE_SCRIPTS_DIR=$T3IZE_SCRIPTS_DIR   T3IZE_LIB_DIR=$T3IZE_LIB_DIR"  
 if (( $# == 0 )); then
   boom "No command given to execute. Exiting."
 fi
@@ -26,15 +29,14 @@ fi
 command=$1
 shift
 script="$T3IZE_SCRIPTS_DIR/$command.sh"
-echo "script=$script"
-echo "hi - I want to run: $script $@"
+debug "script=$script"
 
 if [ -f "$script" ]; then
-  echo "running script $script"
+  info "running script $script"
   $script $@
 else
     if declare -f "$command" > /dev/null; then
-        echo "running function $command"
+        info "running function $command"
         $command $@
     else
         echo "no function found for $command"
