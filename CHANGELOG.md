@@ -17,4 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - command scripts in `scripts`
 - LICENSE file with UAF copyright under MIT
 - README.md structure
+- `sshdisable.sh` script
+- `poem.sh` for fun
 
