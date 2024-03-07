@@ -2,6 +2,11 @@
 t3ize_sh="${0%/*}/../lib/t3ize.sh"
 source "$t3ize_sh"
 
+# Check if vncserver command exists
+if !(command -v vncserver &> /dev/null); then
+  boom "VNC server was not found to be installed."
+fi
+
 #stop ssh and disable ssh on startup. Requires root privelege
 yak "Attempting to disable all VNC servers using sudo to systemctl"
 run "sudo systemctl stop vncserver@*"
