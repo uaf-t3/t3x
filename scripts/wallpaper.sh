@@ -20,7 +20,7 @@ fi
 
 # Download the image file to the Raspberry Pi
 require_command wget
-wget -q -O $WALLPAPER_FILE "$IMAGE_URL"
+run "wget -q -O ${WALLPAPER_FILE} ${IMAGE_URL}"
 if [ $? -eq 0 ]; then
   yak "T3X wallpaper download success"
 else
@@ -28,10 +28,10 @@ else
 fi
 
 if got_command pcmanfm; then
-  yak "pcmanfm command found - settign the image file as the wallpaper"
-  pcmanfm --set-wallpaper="$WALLPAPER_FILE"
+  yak "pcmanfm command found - setting the image file as the wallpaper"
+  run "pcmanfm --set-wallpaper=${WALLPAPER_FILE}"
   yak "Refresh the desktop to show the new wallpaper"
-  pcmanfm -w /
+  run "pcmanfm -w /"
   cowsay "Look at that" | lolcat
 else
   warning "pcmanfm command not found - skipping applying of wallpaper"
