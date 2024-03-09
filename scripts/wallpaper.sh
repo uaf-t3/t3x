@@ -34,9 +34,9 @@ if got_command pcmanfm; then
   run "pcmanfm -w /"
   cowsay "Look at that" | lolcat
 else
-  warning "pcmanfm command not found - skipping applying of wallpaper"
+  warn "pcmanfm command not found - skipping applying of wallpaper"
   cowsay "Manual wallpaper install time"
-  warning "New wallpaper location: $WALLPAPER_FILE"
+  warn "New wallpaper location: $WALLPAPER_FILE"
 fi
 
 exit 0
