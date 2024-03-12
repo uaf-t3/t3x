@@ -21,6 +21,8 @@ fi
 # prevent multiple talk clients at once ...
 # we only have one speaker!
 
-echo "starting talk client pipe to say"
-echo "mosquitto_sub -h \"$MQTT_HOST\" -t \"$TALK_TOPIC\""
+echo "# starting talk client pipe to say"
+echo "# mosquitto_sub -h \"$MQTT_HOST\" -t \"$TALK_TOPIC\""
+echo "# Send a message to the talk topic like so:"
+echo "  mosquitto_pub -h \"$MQTT_HOST\" -t \"$TALK_TOPIC\" -m \"beep boop\""
 mosquitto_sub -h "$MQTT_HOST" -t "$TALK_TOPIC" | tee /dev/tty | say
