@@ -1,8 +1,12 @@
 #!/usr/bin/bash
-DEFAULT_TARGET_INSTALL="$HOME/.local/share/dectalk"
-TARGET_INSTALL=${TARGET_INSTALL:-$DEFAULT_TARGET_INSTALL}
+# (c) Dayne Broderson 2024
+# 
+
+DEFAULT_DECTALK_INSTALL="$HOME/.local/share/dectalk"
+DECTALK_INSTALL=${DECTALK_INSTALL:-$DEFAULT_DECTALK_INSTALL}
 
 # exit if any command fails
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 set -e 
 
 if ! type boom &> /dev/null; then
@@ -31,43 +35,76 @@ else
   echo "All package are already installed .. skipping install"
 fi
 
-if [ ! -d $TARGET_INSTALL ]; then
-	echo mkdir -p $TARGET_INSTALL
-	mkdir -p $TARGET_INSTALL
+if [ ! -d $DECTALK_INSTALL ]; then
+  echo mkdir -p $DECTALK_INSTALL
+  mkdir -p $DECTALK_INSTALL
 fi
 
-cd $TARGET_INSTALL || { boom "failed to cd $TARGET_INSTALL"; }
+cd $DECTALK_INSTALL || { boom "failed to cd $DECTALK_INSTALL"; }
 
 pwd
 
 if [ ! -d .git ]; then
-	git clone https://github.com/dectalk/dectalk . || { boom "git clone failed"; }
+  git clone https://github.com/dectalk/dectalk . || { boom "git clone failed"; }
 else 
-	echo "skipping clone: dectalk dir exists"
+  echo "skipping clone: dectalk dir exists"
   echo "doing a git pull instead"
   git pull
 fi
 
 if [ $? -eq 0 ]; then
-	cd src
+  cd src
 else
-	boom "git clone dectalk failed"
+  boom "git clone dectalk failed"
 fi
 
+
+INSTALL_PREFIX=${INSTALL_PREFIX:-$DECTALK_INSTALL/dist}
+echo "############### BEGIN BUILD #####################"
+echo INSTALL_PREFIX=$INSTALL_PREFIX
+sleep 1
+set -x # start debugging mode
 autoconf || { boom "autoconf -si"; }  # -si ??
 ./configure --prefix=$INSTALL_PREFIX || { boom "./configure --prefix=$INSTALL_PREFIX"; }
 make -j || { boom "make -j"; }
+set +x # stop debugging mode
+sleep 1
+echo "################# END BUILD #####################"
+
 cd ../dist
-./say -a "hello I am a robot. beep boop" || { boom "./say -a 'hellow I am a robot' "; }
-if [ -d $INSTALL_PREFIX/../bin/ ]; then
-  ln say $INSTALL_PREFIX/../bin/
+./say -a "beep boop hello I am a robot beep boop" || { boom "./say -a 'hello I am a robot' "; }
+
+if [ -d $HOME/.local/bin ]; then
+  if echo $PATH | grep .local/bin >/dev/null; then
+    if [ ! -f $HOME/.local/bin/say ]; then
+      echo "adding say wrapper to $HOME/.local/bin from $SCRIPT_DIR"
+      cp "$SCRIPT_DIR/say.sh" "$HOME/.local/bin/say"
+      chmod +x "$HOME/.local/bin/say"
+    else
+      echo "skipping wrapper: $home/.local/bin/say exists"
+    fi
+  fi
 else
   echo "say command available in `pwd`"
 fi
-cd ../src
+
+sleep 1
 
 
-#echo "# Optional: install dectalk to $INSTALL_PREFIX
-#echo " # you can run the following two commands:"
-#echo "# cd $INSTALL_PREFIX/src/dectalk/src'
-##echo "# make install"
+# check for interactive shell
+if test -t 0; then
+  # yay.. let us ask if they want a song
+  read -p "Do you want to hear a song? (y/n) " answer
+  if [[ $answer == [Yy]* ]]; then
+    # dectalk song credit to scruss 
+    # https://scruss.com/blog/2023/05/30/a-terrible-guide-to-singing-with-dectalk/
+    say -pre '[:PHONE ON]' -a '[:nv] [:dv gn 73] [AY<400,330> KAE<200,247> N<100> T<100> SIY<400,208> MIY<400,165> LAH<200,147> VAH<125,185> N<75> NOW<400,220> BAH<200,277> DXIY<200,294> BAH<300,277> T<100> YU<600,247> FOR<200,208> AO<300,247> LX<100> MAY<400,277> LAY<900,294> F<300> _<400> WEH<300,330> N<100> YXOR<400,247> NIR<400,208> MIY<400,165> BEY<200,147> BIY<200,185> DHAX<400,220> SKAY<125,277> Z<75> WIH<125,294> LX<75> BIY<400,277> BLUW<600,247> FOR<200,208> AO<300,247> LX<100> MAY<400,277> LAY<900,294> F<300> _<300> ].'
+  else
+    echo "Ok, maybe later"
+  fi
+else
+  # not interactive shell
+  echo "No song for you (not in an interactive shell"
+fi
+
+
