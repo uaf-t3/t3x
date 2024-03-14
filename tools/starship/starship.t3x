@@ -1,0 +1,26 @@
+#!/usr/bin/bash
+
+# t3x lib helper load
+
+if ! command -v starship ; then
+  echo "Error: Starship not installed yet."
+  echo "TODO: Hint: t3x starship install"
+fi
+
+if [ ! -d $HOME/.local/share/fonts ]; then
+  echo "warning: no $HOME/.local/share/fonts. You may be missing required NerdFonts features"
+fi
+
+# TODO swap this out for a t3x helper
+SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" &> /dev/null & pwd )"
+echo $SCRIPT_DIR
+
+DEFAULT_TOMLFILE=tomls/starship-t3x.toml
+TOMLFILE=${TOMLFILE:-$DEFAULT_TOMLFILE}
+export STARSHIP_CONFIG="$SCRIPT_DIR/$TOMLFILE"
+
+if [ ! -f $STARSHIP_CONFIG ]; then
+  echo "404 File Not Found: STARSHIP_CONFIG=$STARSHIP_CONFIG"
+  exit 1
+fi
+exec bash
