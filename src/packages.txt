@@ -1,3 +1,5 @@
 npm
 scratch
 rpi-imager
+xscreensaver
+neofetch
