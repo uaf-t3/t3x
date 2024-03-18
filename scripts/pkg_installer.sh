@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # File containing the list of packages to install
-PACKAGE_LIST='packages.txt'
+PACKAGE_LIST="${0%/*}/src/packages.txt"
 
 # Update package list to ensure packages are from the latest repository
 apt update
@@ -10,5 +10,5 @@ apt update
 while IFS= read -r package
 do
     # Install each package listed in the packages.txt file
-    apt install -y "$package"
+    sudo apt install -y "$package"
 done < "$PACKAGE_LIST"
