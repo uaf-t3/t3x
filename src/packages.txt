@@ -1,3 +1,3 @@
-git
-curl
-vim
+npm
+scratch
+rpi-imager
