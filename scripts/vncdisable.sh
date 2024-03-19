@@ -10,22 +10,28 @@ fi
 
 #stop ssh and disable ssh on startup. Requires root privelege
 yak "Attempting to disable all VNC servers using sudo to systemctl"
-run "sudo systemctl stop vncserver@*"
-if [ $? -eq 0 ]; then
-  yak "Successful stop of running VNC server(s)"
-  VNC_STOP=true
-else
-  boom "Unable to stop VNC server(s)" 
-fi
-run "sudo systemctl disable vncserver@*"
-if [ $? -eq 0 ]; then
-  yak "Successful disabling of VNC server(s) on start"
-  VNC_DISABLE=true
-else
-  boom "Unable to disable VNC" 
-fi
 
-if [ "$SSH_STOP" = "true" ] && [ "$SSH_DISABLE" = "true" ]; then
+#loop through possible service files because VNC can create multiple with differing names
+for unit_file in /etc/systemd/system/vncserver@*.service; do
+    run "sudo systemctl stop $(basename "$unit_file")"
+    if [ $? -eq 0 ]; then
+        yak "Successfully stopped VNC server: $(basename "$unit_file")"
+        VNC_STOP=true
+    else
+        boom "Unable to stop VNC server: $(basename "$unit_file")"
+    fi
+
+    run "sudo systemctl disable $(basename "$unit_file")"
+    if [ $? -eq 0 ]; then
+        yak "Successfully disabled VNC server on startup: $(basename "$unit_file")"
+        VNC_DISABLE=true
+    else
+        boom "Unable to disable VNC server on startup: $(basename "$unit_file")"
+    fi
+done
+
+#Check if all VNC servers were successfully stopped and disabled
+if [ "$VNC_STOP" = "true" ] && [ "$VNC_DISABLE" = "true" ]; then
   figlet "Disabled VNC" | lolcat
   sleep 1
 else
