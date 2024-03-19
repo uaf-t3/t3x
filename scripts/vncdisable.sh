@@ -11,8 +11,17 @@ fi
 #stop ssh and disable ssh on startup. Requires root privelege
 yak "Attempting to disable all VNC servers using sudo to systemctl"
 
-#loop through possible service files because VNC can create multiple with differing names
-for unit_file in /etc/systemd/system/vncserver@*.service; do
+# Get a list of VNC server unit files
+unit_files=$(ls /etc/systemd/system/vncserver@*.service 2>/dev/null)
+
+# Check if any unit files were found
+if [ -z "$unit_files" ]; then
+    warn "No VNC unit files were found. VNC is not enabled."
+    exit 0
+fi
+
+# Loop over each VNC unit file and disable it
+for unit_file in $unit_files; do
     run "sudo systemctl stop $(basename "$unit_file")"
     if [ $? -eq 0 ]; then
         yak "Successfully stopped VNC server: $(basename "$unit_file")"
