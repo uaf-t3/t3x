@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# File containing the list of packages to install
+# File containing the list of packages to install please
 PACKAGE_LIST="$(dirname "$0")/../src/packages.txt"
 
 # Update package list to ensure packages are from the latest repository
