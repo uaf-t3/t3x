@@ -1,24 +1,28 @@
 #!/usr/bin/env bash
 
-# File containing the list of packages to install please
+# ANSI color codes
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+# File containing the list of packages to install
 PACKAGE_LIST="$(dirname "$0")/../src/packages.txt"
 
 # Update package list to ensure packages are from the latest repository
 if ! apt update; then
-    echo "Error: Failed to update package lists." >&2
+    echo -e "${RED}Error: Failed to update package lists.${NC}" >&2
     exit 1
 else
-    echo "Package lists updated successfully."
+    echo -e "${GREEN}Package lists updated successfully.${NC}"
 fi
 
 # Loop through the packages.txt file
 while IFS= read -r package
 do
     if ! sudo apt install -y "$package"; then
-        echo "Error: Failed to install package: $package" >&2
+        echo -e "${RED}Error: Failed to install package: $package${NC}" >&2
         echo "Continuing to next package..."
     else
-        echo "Successfully installed package: $package"
+        echo -e "${GREEN}Successfully installed package: $package${NC}"
     fi
 done < "$PACKAGE_LIST"
-
