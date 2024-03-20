@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+t3ize_sh="${0%/*}/../lib/t3ize.sh"
+source "$t3ize_sh"
 
 # File containing the list of npm packages to install
 NODE_LIST="${0%/*}/src/nodes.txt"

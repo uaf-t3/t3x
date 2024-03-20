@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+t3ize_sh="${0%/*}/../lib/t3ize.sh"
+source "$t3ize_sh"
+
 
 # File containing the list of packages to install
 PACKAGE_LIST="${0%/*}/src/packages.txt"
