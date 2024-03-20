@@ -16,6 +16,10 @@ if ! command -v say >/dev/null; then
   return 1
 fi
 
+# TODO make this both a client too using --listen
+# to active the listen & speak mode vs publishing 
+# publishing to the configured topic
+
 # TODO add either a PID based lockfile or 
 # single tmux named session logic to
 # prevent multiple talk clients at once ...
