@@ -2,6 +2,8 @@
 
 # https://starship.rs/
 
+SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" &> /dev/null & pwd )"
+
 if type -t $boom; then
   function boom() {
     echo "BOOM: $1"
@@ -10,7 +12,13 @@ if type -t $boom; then
 fi
 
 function starship_install() {
-  echo "curl -sS https://starship.rs/install.sh | sh"
+  echo "######################################################"
+  echo "Starship install can be done like:"
+  echo "         curl -sS https://starship.rs/install.sh | sh"
+  echo "######################################################"
+  echo "Using a t3x cached copy that has been reviewed"
+  cd $SCRIPT_DIR
+  ./cache/starship.rs-install.sh
 }
 
 # check for the command starship run else report missing
@@ -21,7 +29,6 @@ function starship_check() {
     starship_install
     echo "disable this message by removing the symlink in .bash.d/starship.sh"
   else
-    # echo "starship is installed"
     eval "$(starship init bash)"
   fi
 }
@@ -40,7 +47,7 @@ function nerdfont_install() {
     mkdir -p "$ZIPCACHE"
   fi
 
-  if ! command -v wget > /dev/null; then
+  if ! command -v wget > /dev/null 2>&1 ; then
     echo "missing wget - unable to download"
     echo "fix: sudo apt install wget"
     exit 1
@@ -50,12 +57,17 @@ function nerdfont_install() {
   if [ ! -f "$ZIPFILE" ]; then
     echo "downloading $FONTZIP_URL"
     wget --quiet "$FONTZIP_URL" || boom "failed: wget $FONTZIP_URL"
+  else
+    echo "skipping download (file exists): $FONTZIP_URL"
   fi 
   cd ..
   echo "unzipping $ZIPFILE in `pwd`"
-  unzip -n -q zipcache/$ZIPFILE || boom "failed: unzip zipcache/$ZIPFILE"
+  unzip -n -qq zipcache/$ZIPFILE > /dev/null  
+  if [ ! $? -eq 0 ]; then
+    boom "failed: unzip zipcache/$ZIPFILE"
+  fi
   echo "updating font cache: fc-cache -fv"
-  fc-cache -fv || boom "failed: fc-fache -fv"
+  fc-cache -fv > /dev/null 2>&1 || boom "failed: fc-fache -fv"
 }
 
 starship_check
