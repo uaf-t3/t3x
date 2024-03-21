@@ -4,4 +4,3 @@ rpi-imager
 xscreensaver
 neofetch
 python3
-
