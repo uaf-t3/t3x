@@ -1,0 +1,6 @@
+npm
+scratch
+rpi-imager
+xscreensaver
+neofetch
+python3
