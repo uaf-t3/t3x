@@ -6,7 +6,7 @@ python3
 figlet
 toilet
 cowsay
-fortune
+fortune-mod
 lolcat
 jq
 curl
