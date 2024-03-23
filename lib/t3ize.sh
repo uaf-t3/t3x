@@ -4,6 +4,8 @@
 # this is a bit of a hack, but it works for now.
 T3X_LIB_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+T3X_VERSION=$(cat $T3X_LIB_DIR/../VERSION)
+
 # Want more messages in life? Try running like:
 # T3X_DEBUG=true t3x 
 if [ -z "$T3X_DEBUG" ]; then
@@ -15,6 +17,7 @@ fi
 source "$T3X_LIB_DIR/helpers.sh"
 debug "helpers loaded - yak() is available"
 
+
 # the scripts directory is ../scripts from this folder
 debug "T3X_LIB_DIR: $T3X_LIB_DIR/../scripts"
 T3X_SCRIPTS_DIR="$T3X_LIB_DIR/../scripts"
@@ -23,6 +26,8 @@ if [ ! -d $T3X_SCRIPTS_DIR ]; then
 else
     export T3X_SCRIPTS_DIR
     export T3X_LIB_DIR
+    export T3X_VERSION
     debug "T3X_SCRIPTS_DIR: $T3X_SCRIPTS_DIR"
     debug "T3X_SCRIPTS_DIR: $T3X_SCRIPTS_DIR"
+    debug "T3X_VERSION: $T3X_VERSION"
 fi

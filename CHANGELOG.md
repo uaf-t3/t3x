@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > `## [Maj.Min.Tweak] - YYYY-MM-DD`
 
 ## [Unreleased]
+
+[0.1.0] - 2024-04-22
+
+Initial release 
+
 ### Added
 - CHANGELOG.md (this file)
 - primary interface command: `bin/t3x`
@@ -22,3 +27,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `starship` installer added (with nerdfont)
 - `dectalk` installer added
 - `mu` installer added
+- `sanity` script
