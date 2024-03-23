@@ -3,25 +3,51 @@
 # T3X_DEBUG=true # Enable debug messages
 # T3X_RUN=false  # disable running of commands (pretends success)
 
-SCRIPT_DIR=$(cd $(dirname $BASH_SCRIPT[0]) > /dev/null; pwd)
-T3XLIB_DIR=$(realpath $SCRIPT_DIR/../lib)
+SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE) > /dev/null; pwd)
+#echo SCRIPT_DIR=$SCRIPT_DIR
+T3XLIB_DIR=$(realpath $SCRIPT_DIR/../lib/)
+#echo T3XLIB_DIR=$T3XLIB_DIR
 source $T3XLIB_DIR/t3ize.sh
 
-case "$1" in
-  -h|--help)
-    echo "usage: t3x COMMAND [ARGS]"
-    exit
-    ;;
-  -V|--version)
-    echo "t3ize version $T3IZE_VERSION"
-    exit
-    ;;
-  -T|--t3xlib)
-    echo "$T3XLIB_DIR"
-    exit
-    ;;
-esac
+t3x_dry_run=false
+t3x_debug=false
+just_exit=false
 
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help)
+      echo "usage: t3x COMMAND [ARGS]"
+      shift
+      just_exit=true 
+      ;;
+    -V|--version)
+      echo "t3ize version $T3IZE_VERSION"
+      shift
+      just_exit=true 
+      ;;
+    -T|--t3ize)
+      # can be used to include t3ize lib in bash script like so:
+      #    source $(t3x -T)
+      echo "$T3XLIB_DIR/t3ize.sh"
+      exit
+      ;;
+    -d|--debug)
+      echo "Enabling T3X_DEBUG=true"
+      t3x_debug=true
+      shift
+      T3X_DEBUG=true # Enable debug messages
+      ;;
+    -D|--dryrun)
+      echo "Dry run: T3X_RUN=false"
+      T3X_RUN=false
+      shift
+      ;;
+  esac
+done
+
+if [ just_exit ]; then
+  exit 0
+fi
 
 debug "t3x : T3IZE_SCRIPTS_DIR=$T3IZE_SCRIPTS_DIR   T3IZE_LIB_DIR=$T3IZE_LIB_DIR"  
 if (( $# == 0 )); then
@@ -40,12 +66,12 @@ if [ -f "$script" ]; then
   info "running script $script"
   $script $@
 else
-    if declare -f "$command" > /dev/null; then
-        info "running function $command"
-        $command $@
-    else
-        echo "no function found for $command"
-    fi
+  if declare -f "$command" > /dev/null; then
+    info "running function $command"
+    $command $@
+  else
+    echo "no function found for $command"
+  fi
 fi
 
 
