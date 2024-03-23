@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 
-
-
 function slow_lol() {
   msg="$1"
   msg_len=${#msg}
@@ -27,7 +25,11 @@ fi
 CURRENT=$(git branch --show-current)
 if [ ! "$CURRENT" == "main" ]; then
   slow_lol "Error: Not on main branch"
-  exit
+  if [ "$1" == "-f" ]; then 
+    slow_lol ".... but you said -f ... let us keep going"
+  else
+    exit 1
+  fi
 fi
 
 # fetch to udpate information on remote
