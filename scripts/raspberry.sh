@@ -10,7 +10,7 @@ figlet "raspberry" | lolcat
 require_command "expect"
 info "starting the raspberry default password sanity check"
 
-$T3IZE_LIB_DIR/check_default_raspberry.expect $USER > /dev/null
+$T3X_LIB_DIR/check_default_raspberry.expect $USER > /dev/null
 if [ $? -eq 0 ]; then
   yak "good job: Default password of raspberry is not being used"
 else

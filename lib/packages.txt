@@ -4,3 +4,15 @@ rpi-imager
 xscreensaver
 neofetch
 python3
+figlet
+toilet
+cowsay
+fortune
+lolcat
+jq
+curl
+git
+vim
+tmux
+htop
+pv
