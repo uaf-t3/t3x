@@ -19,4 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README.md structure
 - `sshdisable.sh` script
 - `poem.sh` for fun
-
+- `starship` installer added (with nerdfont)
+- `dectalk` installer added
+- `mu` installer added
