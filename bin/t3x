@@ -3,77 +3,135 @@
 # T3X_DEBUG=true # Enable debug messages
 # T3X_RUN=false  # disable running of commands (pretends success)
 
-SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE) > /dev/null; pwd)
-#echo SCRIPT_DIR=$SCRIPT_DIR
-T3XLIB_DIR=$(realpath $SCRIPT_DIR/../lib/)
-#echo T3XLIB_DIR=$T3XLIB_DIR
-source $T3XLIB_DIR/t3ize.sh
+T3X_DEBUG=${T3X_DEBUG:-"false"} # Default quiet mode
 
-t3x_dry_run=false
-t3x_debug=false
+SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE) > /dev/null; pwd)
+T3X_DIR=$(realpath $SCRIPT_DIR/../)
+T3X_LIB_DIR=$(realpath $T3X_DIR/lib)
+source $T3X_LIB_DIR/t3ize.sh
+
+function t3x_tools_list() {
+  t3xtools=()
+  for tool in $(ls $T3X_DIR/tools/*/*.t3x | sort -n); do
+    tool_name=$(basename $tool .t3x)
+    t3xtools+=("$tool_name")
+  done
+  echo -n "t3x tool list: "
+  printf "%s" "${t3xtools[0]}"    # first element
+  printf ", %s" "${t3xtools[@]:1}" # remaining elements prefixed by ,
+  echo 
+}
+
+# if it doesn't exist, check for a function of the same name in the t3ize.sh file
+
 just_exit=false
+args_collected=false
+while_loop_done=false
+declare -a keep_args
 
 while [[ $# -gt 0 ]]; do
+  if [ "$while_loop_done" == true ]; then
+    break # we hit the --- and just need to move on now
+  fi
   case "$1" in
     -h|--help)
-      echo "usage: t3x COMMAND [ARGS]"
       shift
-      just_exit=true 
+      echo "usage: t3x [ARGS] COMMAND [ARGS]"
+      echo "   -h|--help      # this help"
+      echo "   -V|--version   # current T3X_VERSION"
+      echo "   -T|--t3sh      # realpath of t3ize.sh"
+      echo "   -d|--debug     # enable debug messages"
+      echo "   -D|--dryrun    # will not run commands : warning limited to t3ized runs"
+      echo "   --list-tools   # provide a list of t3x tools"
+      echo "   --list-scripts # provide a list of t3x tools"
+      exit 0
       ;;
     -V|--version)
-      echo "t3ize version $T3IZE_VERSION"
       shift
+      echo "t3ize version $T3X_VERSION"
       just_exit=true 
       ;;
-    -T|--t3ize)
+    -T|--t3sh)
       # can be used to include t3ize lib in bash script like so:
       #    source $(t3x -T)
-      echo "$T3XLIB_DIR/t3ize.sh"
+      echo "$T3X_LIB_DIR/t3ize.sh"
       exit
       ;;
     -d|--debug)
       echo "Enabling T3X_DEBUG=true"
-      t3x_debug=true
       shift
       T3X_DEBUG=true # Enable debug messages
       ;;
     -D|--dryrun)
       echo "Dry run: T3X_RUN=false"
+      shift
       T3X_RUN=false
+      ;;
+    --list-scripts)
+      echo "not implimented"
+      exit 1
+      ;;
+    --list-tools)
+      t3x_tools_list
+      exit 0;
+      ;;
+    ---)
+      keep_args=(${keep_args[@]} "$@")
+      while_loop_done=true
+      break;  # just let the rest of the arguments carry on
+      ;;
+    *)
+      keep_args+=("$1")
       shift
       ;;
   esac
 done
 
-if [ just_exit ]; then
+set -- ${keep_args[@]}
+
+if [ "$T3X_DEBUG" == "true" ]; then
+  echo "T3X_DIR=$T3X_DIR"
+  echo "T3X_LIB_DIR=$T3X_LIB_DIR"
+  echo "keep_args=${keep_args[@]}"
+  echo "\$\@=$@"
+fi
+
+if [ "$just_exit" == "true" ]; then
   exit 0
 fi
 
 debug "t3x : T3IZE_SCRIPTS_DIR=$T3IZE_SCRIPTS_DIR   T3IZE_LIB_DIR=$T3IZE_LIB_DIR"  
 if (( $# == 0 )); then
-  boom "No command given to execute. Exiting."
+  boom "Nothing asked for.  Try: t3x --help"
 fi
 
 # take the first argument as the command to execute
 # check in the scripts folder for a script of the same name as the command
 # if it exists, execute it
 command=$1
+debug "command=$command"
 shift
-script="$T3IZE_SCRIPTS_DIR/$command.sh"
-debug "script=$script"
 
+script="$T3X_DIR/scripts/$command.sh"
+debug "checking for script=$script"
 if [ -f "$script" ]; then
   info "running script $script"
   $script $@
-else
-  if declare -f "$command" > /dev/null; then
-    info "running function $command"
-    $command $@
+  exit $?
+fi
+
+t3xtool="$T3X_DIR/$command/$command.t3x"
+if [ -f $t3xtool ]; then
+  debug "found $command tool: $t3xtool"
+  $t3xtool $@
+  if [ $? -eq 0 ]; then
+    exit 0
   else
-    echo "no function found for $command"
+    echo "T3X command failed: $command"
+    exit $retval
   fi
 fi
 
+error "no t3x command found: $command"
 
-# if it doesn't exist, check for a function of the same name in the t3ize.sh file
 # if it exists, execute it
