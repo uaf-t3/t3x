@@ -3,8 +3,9 @@
 # T3X_DEBUG=true # Enable debug messages
 # T3X_RUN=false  # disable running of commands (pretends success)
 
-t3ize_sh="${0%/*}/../lib/t3ize.sh"
-source "$t3ize_sh"
+SCRIPT_DIR=$(cd $(dirname $BASH_SCRIPT[0]) > /dev/null; pwd)
+T3XLIB_DIR=$(realpath $SCRIPT_DIR/../lib)
+source $T3XLIB_DIR/t3ize.sh
 
 case "$1" in
   -h|--help)
@@ -13,6 +14,10 @@ case "$1" in
     ;;
   -V|--version)
     echo "t3ize version $T3IZE_VERSION"
+    exit
+    ;;
+  -T|--t3xlib)
+    echo "$T3XLIB_DIR"
     exit
     ;;
 esac
@@ -46,5 +51,3 @@ fi
 
 # if it doesn't exist, check for a function of the same name in the t3ize.sh file
 # if it exists, execute it
-
-
