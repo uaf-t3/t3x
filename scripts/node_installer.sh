@@ -6,7 +6,12 @@ GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 # File containing the list of npm packages to install
-NODE_LIST="$(dirname "$0")/../src/nodes.txt"
+NODE_LIST="$(dirname "$0")/../lib/nodes.txt"
+
+if ! command -v npm > /dev/null; then
+  echo "missing npm. Installing via apt"
+  sudo apt install npm
+fi
 
 # Check if NODE_LIST file exists
 if [ ! -f "$NODE_LIST" ]; then

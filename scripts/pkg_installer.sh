@@ -6,10 +6,10 @@ GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 # File containing the list of packages to install
-PACKAGE_LIST="$(dirname "$0")/../src/packages.txt"
+PACKAGE_LIST="$(dirname "$0")/../lib/packages.txt"
 
 # Update package list to ensure packages are from the latest repository
-if ! apt update; then
+if ! sudo apt update; then
     echo -e "${RED}Error: Failed to update package lists.${NC}" >&2
     exit 1
 else
