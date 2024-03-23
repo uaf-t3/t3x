@@ -7,7 +7,7 @@ function slow_lol() {
 
   padding=$(( (twidth - msg_len ) / 2 ))
   printf "%*s" $padding ""
-  echo "$msg" | pv -qL 22 | lolcat -S 33  -F 0.001
+  echo "$msg" | pv -qL 22 | lolcat -S 33  -F 0.01
 }
 
 clear
