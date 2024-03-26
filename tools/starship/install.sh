@@ -52,6 +52,7 @@ function nerdfont_install() {
     echo "fix: sudo apt install wget"
     exit 1
   fi
+  pushd . > /dev/null
 
   cd $ZIPCACHE
   if [ ! -f "$ZIPFILE" ]; then
@@ -68,6 +69,7 @@ function nerdfont_install() {
   fi
   echo "updating font cache: fc-cache -fv"
   fc-cache -fv > /dev/null 2>&1 || boom "failed: fc-fache -fv"
+  popd
 }
 
 starship_check
