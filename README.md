@@ -1,7 +1,7 @@
 # T3X
-The cuddly waffle toolset for T3 Raspberry Pi image creation & maintance.
+The cuddly waffle toolset for T3 Raspberry Pi image creation & maintenance.
 
-> TODO words that set context of this project and it's role in Alaska T3 program
+> TODO words that set the context of this project and its role in the Alaska T3 program
 > & T3 Alliance RPi ecosystem
 
 ## Installation
@@ -11,9 +11,9 @@ The cuddly waffle toolset for T3 Raspberry Pi image creation & maintance.
 ## License
 
 We want this tool to be available for T3 sites and others to use under an 
-open source license. We picked the [Apache 2.0 license](https://choosealicense.com/licenses/apache-2.0/) 
+open-source license. We picked the [Apache 2.0 license](https://choosealicense.com/licenses/apache-2.0/) 
 that provides the following features to users. Any contributions to this project
-need to be be able to eligible to be included under this license. 
+must be eligible to be included under this license or as needed; any specific file must clearly be labeled if they fall under different licensing restrictions. 
 
 | Permissions | Conditions | Limitations |
 | ----------- | ---------- | ----------- | 
@@ -27,11 +27,11 @@ See the [LICENSE.md](LICENSE.MD) file for full license.
 
 ## Credits & Sponsors
 
-- TODO: List of inspired projects credits we leaned on (easybotics script)
+- Seeds from the [Easybotics T3 rpi config script](https://github.com/easybotics/t3-rpi-config-script). 
 - TODO: List of funders or partners sponsoring development
 
 ## Contributors
 
-- [@dayne](https://github.com/dayne) - T3X Innovaton Architect
+- [@dayne](https://github.com/dayne) - T3X Innovation  Architect
 - [@ItalianSquirel](https://github.com/ItalianSquirel) - T3X Code Conjurer
 - [@SushiFanta](https://github.com/SushiFanta) - T3X Algorithm Alchemist
