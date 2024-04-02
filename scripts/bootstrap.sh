@@ -16,26 +16,32 @@ function agree() {
   done
 }
 
-if ping -c 1 google.com > /dev/null; then
+if $(ping -c 1 google.com > /dev/null); then
   echo "Internet detected"
-  echo "Are you connected to the internet?"
-
+else
+  echo "Unable to ping google.com -- Are you connected to the internet?"
+  sleep 1
+  if $(ping -c 1 8.8.8.8 > /dev/null); then
+    echo "Unable to ping 8.8.8.8 -- likely no internet!"
+    sleep 1
+    exit 1
+  fi
 fi
 
 if ! command -v git > /dev/null ; then
-  echo "missing git - installing now"
+  echo "Warning: missing git - installing now"
   sudo apt update && sudo apt install git && echo "git installed"
   if [ $? -eq 0 ]; then
-    echo "git installed. continuing"
+    echo "Fixed: git installed. continuing"
   else
-    echo "unable to install git"
+    echo "Fatal: unable to install git"
   fi
 fi
 
 if [ -d $HOME/t3x/.git ]; then
-  echo "t3x already available"
+  echo "Success: t3x already available"
 else
-  echo "cloning latest t3x to $HOME/t3x"
+  echo "Clone: latest t3x to $HOME/t3x"
   # TODO: consider tie into a 'stable' 
   git clone https://github.com/uaf-t3/t3x.git > /dev/null
   if [ $? -eq 0 ]; then
@@ -50,24 +56,24 @@ cd $HOME/t3x
 
 T3X_BRANCH=$(git branch --show-current)
 if [ "$T3X_BRANCH" == 'main' ]; then
-  echo "Good: on main branch"
+  echo "Expected: t3x checkout is on main branch"
 else
-  echo "Odd: We are not on the t3x main branch.  We are on $T3X_BRANCH."
-  agree "Continue on within the context of $T3X_BRANCH branch?"
+  echo "Warning: We are not on the t3x main branch.  We are on $T3X_BRANCH."
+  agree "  Continue on within the context of $T3X_BRANCH branch?"
   if [ $? -eq 0 ]; then
-    echo "Ok! Carrying on with $T3X_BRANCH"
+    echo "  Ok! Carrying on with $T3X_BRANCH"
   else
-    echo "Recommend switching back to main branch with: git switch main"
+    echo "  Recommend switching back to main branch with: git switch main"
   fi
 fi
 
 if git pull > /dev/null; then
-  echo "git pull success"
+  echo "Success: git pull"
 else
-  echo "git pull failed"
-  agree "Do you want to continue even though git pull failed?"
+  echo "Fail: git pull"
+  agree "  Do you want to continue even though git pull failed?"
   if [ $? -eq 0 ]; then
-    echo "Ok!"
+    echo "  Ok!"
   else
     echo "Bye"
     exit 1
@@ -76,9 +82,9 @@ fi
 
 # setup .bashrc setup with .bash.d
 if $(grep "T3X.bash.d" $HOME/.bashrc  > /dev/null); then
-  echo "Detected .bash.d setup in .bashrc already"
+  echo "Done: Detected .bash.d setup in .bashrc already"
 else
-  echo "Setting .bash.d up in .bashrc"
+  echo "Start: setup .bash.d up in .bashrc"
   echo -e '\n\n# T3X.bash.d - if interactive then do fancy setup stuff\nif [[ $- == *i* ]]; then\n  if [ -d $HOME/.bash.d ]; then\n    for I in $HOME/.bash.d/*.sh; do\n      source $I  \n    done\n  fi\nfi\n' >> ~/.bashrc
 fi
 
@@ -89,14 +95,16 @@ if [ ! -d $HOME/.bash.d ]; then
 fi
 
 # add skel/t3x.bash.d to $HOME/.bash.d
-echo "adding skel/t3x.bash.d to ~/.bash.d"
+echo "Start: adding skel/t3x.bash.d to ~/.bash.d"
 cp -nvl skel/t3x.bash.d/* $HOME/.bash.d/
 if [ $? -eq 0 ]; then
-  echo "success: skel setup of .bash.d"
+  echo "Success: skel setup of .bash.d"
   echo "note: to have this take effect close and re-open the terminal"
 else
-  echo "fail: skel setup of .bash.d"
+  echo "Fail: skel setup of .bash.d"
 fi
 
 echo "##############################################"
-echo "t3x bootstrap completed.  close the terminal and re-open it"
+echo "          t3x bootstrap completed."
+echo "        close the terminal and re-open it"
+echo "##############################################"
