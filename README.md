@@ -6,14 +6,20 @@ The cuddly waffle toolset for T3 Raspberry Pi image creation & maintenance.
 
 ## Installation
 
-New Pi
+New Pi setup fully manual:
 ```
 git clone git@github.com:uaf-t3/t3x
 cd t3x
 ./scripts/bootstrap.sh
 ```
 
+Same thing but with trust enabled:
+```
+curl https://raw.github.com/uaf-t3/t3x/main/scripts/bootstrap.sh | bash -e
+```
+
 ## Usage
+
 
 
 ## License
