@@ -5,3 +5,5 @@ if [ -d $HOME/t3x/bin ]; then
     export PATH=$PATH:$HOME/t3x/bin;
   fi
 fi
+
+# TODO: check to see if sanity has been run
