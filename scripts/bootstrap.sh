@@ -99,7 +99,6 @@ echo "Start: adding skel/t3x.bash.d to ~/.bash.d"
 cp -nvl skel/t3x.bash.d/* $HOME/.bash.d/
 if [ $? -eq 0 ]; then
   echo "Success: skel setup of .bash.d"
-  echo "note: to have this take effect close and re-open the terminal"
 else
   echo "Fail: skel setup of .bash.d"
 fi
