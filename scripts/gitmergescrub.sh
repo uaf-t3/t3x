@@ -24,10 +24,10 @@ fi
 
 CURRENT=$(git branch --show-current)
 if [ ! "$CURRENT" == "main" ]; then
-  slow_lol "Error: Not on main branch"
   if [ "$1" == "-f" ]; then 
-    slow_lol ".... but you said -f ... let us keep going"
+    slow_lol "Warning: not on main branch .... but you said -f ... let us keep going"
   else
+  slow_lol "Error: Not on main branch ... overide this with -f"
     exit 1
   fi
 fi
@@ -43,25 +43,45 @@ BASE=$(git merge-base @ @{u})
 if [ $LOCAL = $REMOTE ]; then
   slow_lol "Good: Up to date with the remote branch"
 elif [ $LOCAL = $BASE ]; then
-  slow_lol "Warning: Local branchis behind the remote branch. Pull latest"
+  slow_lol "Warning: Local branch is behind the remote branch. Pull latest"
   exit 1
 elif [ $REMOTE = $BASE ]; then
-  echo "Local branch has diverged from the remote branch"
+  slow_lol "Local branch has diverged from the remote branch"
   exit 1
 fi
 
-for branch in $(git branch --merged @{u} | grep -v "^\*" | grep -v main); do
-  slow_lol "Branch '$branch' is merged into the remote tracking branch and can be deleted"
+for branch in $(git branch --merged @{u} | grep -v "\*\|main|head|$CURRENT" ); do
+  slow_lol "Branch ${branch} is merged into the remote tracking branch and can be deleted"
   sleep 1
-  output=$(git branch -d $branch)
-  if [ $? -eq 0 ]; then
-    slow_lol "$branch deleted"
-  else
-    slow_lol "Error: Failure in deleting $branch"
-    slow_lol "$output"
-    exit 1
-  fi
-  sleep 0.5
+  while true ; do
+    read -p "Do you want to delete $branch? [yes/no(skip)/quit] (y/n/q): " answer
+    answer=$(echo $answer | tr '[:upper]' '[:lower]')
+
+    case $answer in
+      y | yes)
+        output=$(git branch -d $branch)
+        if [ $? -eq 0 ]; then
+          slow_lol "$branch deleted"
+        else
+          slow_lol "Error: Failure in deleting $branch"
+          slow_lol "$output"
+          exit 1
+        fi
+        sleep 0.5
+        ;;
+      n | no)
+        slow_lol "skipping $branch ..."
+        next;
+        ;;
+      q | quit)
+        slow_lol "Ok!  Bye!"
+        exit 0;
+        ;;
+      *) 
+        echo "Invalid response - Please answer yes (y), no (n), or quit (q)."
+        ;;
+    esac
+  done
 done 
 printf "\n\n\n"
 slow_lol "######## DONE ########"
