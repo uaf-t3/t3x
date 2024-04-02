@@ -96,12 +96,23 @@ fi
 
 # add skel/t3x.bash.d to $HOME/.bash.d
 echo "Start: adding skel/t3x.bash.d to ~/.bash.d"
-cp -nvl skel/t3x.bash.d/* $HOME/.bash.d/
-if [ $? -eq 0 ]; then
-  echo "Success: skel setup of .bash.d"
-else
-  echo "Fail: skel setup of .bash.d"
-fi
+for tfile in skel/t3x.bash.d/* ; do
+  fname=$(basename $tfile)
+  if [ ! -f $HOME/.bash.d/$fname ]; then
+    cp -v $tfile $HOME/.bash.d/
+  else
+    if $(diff $tfile $HOME/.bash.d/$fname > /dev/null); then
+      echo "  $fname exists and is same"
+    else
+      agree "  $fname different -- replace with t3x version?"
+      if [ $? -eq 0 ]; then
+        cp -v $tfile $HOME/.bash.d
+      else
+        echo "  skipping update of $fname"
+      fi
+    fi
+  fi
+done
 
 echo "##############################################"
 echo "          t3x bootstrap completed."
