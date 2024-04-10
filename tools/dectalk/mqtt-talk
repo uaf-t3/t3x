@@ -8,22 +8,31 @@ TALK_TOPIC=${TALK_TOPIC:-$DEFAULT_TALK_TOPIC}
 
 if ! command -v mosquitto_sub >/dev/null; then
   echo "missing: mosquitto_sub # fix: sudo apt install mosquitto_clients"
-  return 1
+  exit 1
 fi
 
 if ! command -v say >/dev/null; then
   echo "missing: say # fix ... t3x or solid-octo-goggles or dectalk"
-  return 1
+  exit 1
 fi
 
-# TODO make this both a client too using --listen
-# to active the listen & speak mode vs publishing 
-# publishing to the configured topic
+# TODO say mode
+#      This current version is the 'listen & speak' mode.
+#      make this client offer 'say' mode aligned with 
+#      the way it configures the server/topic structure
+
+# TODO topic setting
+#      offer default / override / specify for target topic
 
 # TODO add either a PID based lockfile or 
-# single tmux named session logic to
-# prevent multiple talk clients at once ...
-# we only have one speaker!
+#      single tmux named session logic to
+#      prevent multiple talk clients at once ...
+#      Ensure we only have one speaker!
+
+# TODO easy setup of an auto launch of the listen & speak
+#      with the configured host+topic captured for it 
+
+# TODO offer voice swap / say method(s)
 
 echo "# starting talk client pipe to say"
 echo "# mosquitto_sub -h \"$MQTT_HOST\" -t \"$TALK_TOPIC\""
