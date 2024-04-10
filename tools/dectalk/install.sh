@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 # (c) Dayne Broderson 2024
-# 
+# DecTalk installer
+# TODO: cache a build to speed this up on older RPis
 
 DEFAULT_DECTALK_INSTALL="$HOME/.local/share/dectalk"
 DECTALK_INSTALL=${DECTALK_INSTALL:-$DEFAULT_DECTALK_INSTALL}
@@ -67,12 +68,14 @@ set -x # start debugging mode
 autoconf || { boom "autoconf -si"; }  # -si ??
 ./configure --prefix=$INSTALL_PREFIX || { boom "./configure --prefix=$INSTALL_PREFIX"; }
 make -j || { boom "make -j"; }
-set +x # stop debugging mode
 sleep 1
 echo "################# END BUILD #####################"
 
 cd ../dist
+pwd
 ./say -a "beep boop hello I am a robot beep boop" || { boom "./say -a 'hello I am a robot' "; }
+
+set +x # stop debugging mode
 
 if [ -d $HOME/.local/bin ]; then
   if echo $PATH | grep .local/bin >/dev/null; then
