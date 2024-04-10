@@ -10,15 +10,16 @@ if ! command -v starship ; then
 fi
 
 if [ ! -d $HOME/.local/share/fonts ]; then
-  echo "warning: no $HOME/.local/share/fonts. You may be missing required NerdFonts features"
-  echo "fix with: t3x nerdfonts install"
+  echo "warning: no $HOME/.local/share/fonts."
+  echo "  You may be missing required NerdFonts features"
+  echo "  fix with: t3x nerdfonts install"
 fi
 
 # TODO swap this out for a t3x helper
 SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" &> /dev/null & pwd )"
 echo $SCRIPT_DIR
 
-DEFAULT_TOMLFILE=tomls/starship-t3x.toml
+DEFAULT_TOMLFILE=files/starship-t3x.toml
 TOMLFILE=${TOMLFILE:-$DEFAULT_TOMLFILE}
 export STARSHIP_CONFIG="$SCRIPT_DIR/$TOMLFILE"
 
