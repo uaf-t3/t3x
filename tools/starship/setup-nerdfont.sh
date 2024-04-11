@@ -4,51 +4,55 @@
 
 SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" &> /dev/null & pwd )"
 
-if type -t $boom; then
-  function boom() {
-    echo "BOOM: $1"
-    exit 1
-  }
+#local FONTZIP_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
+#FONTZIP_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/Ubuntu.zip"
+FONTZIP_URL_DEFAULT="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/UbuntuMono.zip"
+FONTZIP_URL=${1:-$FONTZIP_URL_DEFAULT}
+ZIPFILE=$(basename $FONTZIP_URL)
+FONTNAME=$(basename $ZIPFILE .zip)
+echo "### Starting nerd font install of $FONTNAME"
+
+ZIPCACHE="$HOME/.local/share/fonts/zipcache"
+if [ ! -d "$ZIPCACHE" ]; then
+  echo "making ZIPCACHE: $ZIPCACHE"
+  mkdir -p "$ZIPCACHE"
 fi
 
-function nerdfont_install() {
-  #local FONTZIP_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
-  #FONTZIP_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/Ubuntu.zip"
-  FONTZIP_URL_DEFAULT="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/UbuntuMono.zip"
-  FONTZIP_URL=${1:-$FONTZIP_URL_DEFAULT}
-  local ZIPFILE=$(basename $FONTZIP_URL)
-  echo "starting nerdfont install: $ZIPFILE"
-  local ZIPCACHE="$HOME/.local/share/fonts/zipcache"
-  if [ ! -d "$ZIPCACHE" ]; then
-    echo "making ZIPCACHE: $ZIPCACHE"
-    mkdir -p "$ZIPCACHE"
-  fi
+if ! command -v wget > /dev/null 2>&1 ; then
+  echo "Fatal: missing wget - unable to download"
+  echo "       fix: sudo apt install wget"
+  exit 1
+fi
 
-  if ! command -v wget > /dev/null 2>&1 ; then
-    echo "missing wget - unable to download"
-    echo "fix: sudo apt install wget"
+cd $ZIPCACHE
+if [ -f "$ZIPFILE" ]; then
+  echo "Skipping download (file exists): $ZIPFILE"
+else
+  echo "Starting download $FONTZIP_URL"
+  wget --quiet "$FONTZIP_URL" 
+  if [ $? - eq 0 ]; then
+    echo "Fatal: Download of font failed: wget $FONTZIP_URL"
     exit 1
   fi
-  pushd . > /dev/null
+fi 
 
-  cd $ZIPCACHE
-  if [ ! -f "$ZIPFILE" ]; then
-    echo "downloading $FONTZIP_URL"
-    wget --quiet "$FONTZIP_URL" || boom "failed: wget $FONTZIP_URL"
-  else
-    echo "skipping download (file exists): $FONTZIP_URL"
-  fi 
-  cd ..
-  echo "unzipping $ZIPFILE in `pwd`"
+FONT_TTF=$(unzip -l $ZIPFILE | grep .ttf | head -n 1 | awk '{print $4}')
+cd ..
+if [ -f $FONT_TTF ]; then
+  echo "Skipping unzip of $ZIPFILE ... file exists: $FONT_TTF"
+else
+  echo "Starting unzip $ZIPFILE in `pwd`"
   unzip -n -qq zipcache/$ZIPFILE > /dev/null  
   if [ ! $? -eq 0 ]; then
-    boom "failed: unzip zipcache/$ZIPFILE"
+    echo "Failed unzip of zipcache/$ZIPFILE"
+    exit 1
   fi
-  echo "updating font cache: fc-cache -fv"
-  fc-cache -fv > /dev/null 2>&1 || boom "failed: fc-fache -fv"
-  popd
-}
-
-nerdfont_install
-
-which $1
+  #  
+  echo "Starting font cache update: fc-cache -fv"
+  fc-cache -fv > /dev/null 2>&1 || "Failed: fc-fache -fv"
+  if [ $? -eq 0 ]; then
+    echo "Font-cache update completed"
+  else
+    echo "Font-cache update failed"
+  fi
+fi
