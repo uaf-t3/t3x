@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [0.1.0] - 2024-04-22
 
-Initial release 
+Initial public release 
 
 ### Added
 - CHANGELOG.md (this file)
@@ -28,3 +28,4 @@ Initial release
 - `dectalk` installer added
 - `mu` installer added
 - `sanity` script
+- `t3x pi` tool

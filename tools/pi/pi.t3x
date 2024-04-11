@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+source $(t3x -T)
+
+TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
+cowsay "Tool time with $TOOL_NAME" | lolcat
+SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+
+function scripts_list() {
+  scripts=()
+  for script in $(ls $SCRIPT_DIR/scripts/*.sh 2> /dev/null | sort -n ); do
+    script_name=$(basename $script .sh)
+    scripts+=("$script_name")
+  done
+
+  case ${#scripts[@]} in
+    0) 
+      echo "   No scripts found ... Something is wonky - report this bug"
+      ;;
+    1) 
+      echo "   Only one script available: $scripts"
+      ;;
+    *) 
+      echo -n "  Scripts available: "
+      printf "%s" "${scripts[0]}"    # first element
+      printf ", %s" "${scripts[@]:1}" # remaining elements prefixed by ,
+      echo 
+      ;;
+  esac
+}
+
+just_exit=false
+args_collected=false
+while_loop_done=false
+declare -a keep_args
+
+while [[ $# -gt 0 ]]; do
+  if [ "$while_loop_done" == true ]; then
+    break # we hit the --- and just need to move on now
+  fi
+  case "$1" in
+    help)
+      shift
+      echo "usage: pi [ARGS] COMMAND [ARGS]"
+      echo "   help      # this help"
+      scripts_list
+      exit 0
+      ;;
+    ---)
+      keep_args=(${keep_args[@]} "$@")
+      while_loop_done=true
+      break;  # just let the rest of the arguments carry on
+      ;;
+    *)
+      keep_args+=("$1")
+      shift
+      ;;
+  esac
+done
+
+command=$1
+debug "command=$command"
+shift
+
+script="$SCRIPT_DIR/scripts/$command.sh"
+debug "checking for script=$script"
+if [ -f "$script" ]; then
+  info "running script $script"
+  $script $@
+  exit $?
+fi
+
+error "Error: No $command command .. try asking for help"

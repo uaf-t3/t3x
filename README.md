@@ -6,21 +6,58 @@ The cuddly waffle toolset for T3 Raspberry Pi image creation & maintenance.
 
 ## Installation
 
-New Pi setup fully manual:
+Fully manual clone steps:
 ```
 git clone git@github.com:uaf-t3/t3x
 cd t3x
+# review the scripts starting with bootstrap.sh
 ./scripts/bootstrap.sh
 ```
 
-Same thing but with trust enabled:
+Trust the T3X CHEESE lab team? Recommended easy method:
 ```
 curl https://raw.github.com/uaf-t3/t3x/main/scripts/bootstrap.sh | bash -e
 ```
 
-## Usage
+## `t3x` Usage
 
+The `t3x` command offers an interface to a collection of scripts and tools.
 
+### Scripts
+
+#### `scripts/bootstrap.sh` 
+Gets t3x installed & into a good state by the following steps:
+- verify functional access to the Internet
+- ensures basic tools needed for bootstrap (git) are available
+- Fetches latest version of t3x `main` branch. 
+- Setup `$HOME/.bash.d` folder. TODO: Wiki page on this!  
+- Use `.bash.d/t3x.sh` to ensure `$HOME/t3x/bin` is in `$PATH`
+
+#### `scripts/
+
+### Tools
+
+#### `t3x pi` 
+Tools to manage our pi.  Includes fun gems like:
+- [ ] `t3x pi setup`
+  - [ ] `t3x pi update`
+  - [ ] `t3x pi sanity`
+  - [x] `t3x pi wallpaper`
+- [ ] `t3x pi lockdown`
+  - [ ] runs setup (and steps involved there)
+  - [ ] installs and setups firewall
+
+#### `t3x starship`
+
+A tool to ensure our T3 RPis have a cool custom prompt and fonts for maximum enjoyment.  See the [tools/starship/README.md](./tools/starship/README.md) for more details.  
+
+`t3x starship setup`
+- Installs & configures [starship.sh](https://starship.sh)
+- Ensures the LxTerminal is using a NerdFont (required for advanced prompts)
+- Future TODO include bash-completion and other advanced shells
+
+`t3x starship launch`
+- Bonus launch features
 
 ## License
 
