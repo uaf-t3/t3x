@@ -55,7 +55,7 @@ while [[ $# -gt 0 ]]; do
       echo "   -T|--t3sh      # realpath of t3ize.sh"
       echo "   -d|--debug     # enable debug messages"
       echo "   -D|--dryrun    # will not run commands : warning limited to t3ized runs"
-      echo "   -E|--eval      # t3xize your scripts: eval \$(t3x -E)"
+      echo "   -E|--env      # get the T3X env details"
       echo "   --list-tools   # provide a list of t3x tools"
       echo "   --list-scripts # provide a list of t3x tools"
       exit 0
@@ -94,13 +94,11 @@ while [[ $# -gt 0 ]]; do
       while_loop_done=true
       break;  # just let the rest of the arguments carry on
       ;;
-    -E|--eval)
-      echo '# t3ize your scripts with: eval $(t3x -E)'
+    -E|--env)
       echo "T3X_DEBUG=${T3X_DEBUG}"
-      echo "SCRIPT_DIR=${SCRIPT_DIR}"
       echo "T3X_DIR=${T3X_DIR}"
       echo "T3X_LIB_DIR=${T3X_LIB_DIR}"
-      echo "source $T3X_LIB_DIR/t3ize.sh"
+      echo '# bash script hint: source $(t3x -T)'
       exit
       ;;
     *)
