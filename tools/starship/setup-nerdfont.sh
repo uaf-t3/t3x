@@ -56,3 +56,20 @@ else
     echo "Font-cache update failed"
   fi
 fi
+
+LXT_CONF="$HOME/.config/lxterminal/lxterminal.conf"
+LXT_DIR=$(dirname $LXT_CONF)
+if [ ! -f "${LXT_CONF}" ]; then
+  echo "No lxterminal.conf found ... putting t3x version in place"
+  mkdir -p $LXT_DIR
+  cp -v $SCRIPT_DIR/files/lxterminal.conf $LXT_DIR/
+else
+  echo "Found existing lxterminal.conf ... checking for Nerds"
+  if grep "Nerd" $LXT_CONF > /dev/null; then
+    echo "Nerds found in lxterminal.conf ... skipping reconfiguring it"
+  else
+    echo "No nerds found in lxterminal.conf ... backing up & replacing"
+    cp -v "$LXT_CONF" "${LXT_CONF}.orig"
+    cp -v $SCRIPT_DIR/files/lxterminal.conf $LXT_DIR/
+  fi
+fi
