@@ -3,7 +3,7 @@ source $(t3x -T)
 
 TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
 cowsay "Tool time with $TOOL_NAME" | lolcat
-SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)  
 
 function scripts_list() {
   scripts=()

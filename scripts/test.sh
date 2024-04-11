@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-eval $(t3x -E)
+source $(t3x -T)
 
 info "information message"
 debug "debug message"
