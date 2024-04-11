@@ -1,12 +1,70 @@
-#!/usr/bin/env bash
-
-t3ize_sh="${0%/*}/../lib/t3ize.sh"
-source "$t3ize_sh"
+#!/usr/bin/bash
+T3X_DEBUG=${T3X_DEBUG:-"false"} # Default quiet mode
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
+T3X_DIR=$(realpath $SCRIPT_DIR/../)
+T3X_LIB_DIR=$(realpath $T3X_DIR/lib)
+source $T3X_LIB_DIR/t3ize.sh
 
 yak "sanity check initiated"
+sleep 1
 
-source $T3X_SCRIPTS_DIR/pkg_installer.sh
+# ANSI color codes
+RED='\033[0;31m'   # Red
+GREEN='\033[0;32m' # Green
+NC='\033[0m'       # No Color
 
-figlet "T3X" | lolcat
+# File containing the list of packages to install
+PACKAGE_LIST="$T3X_LIB_DIR/packages.txt"
+debug PACKAGE_LIST=$PACKAGE_LIST
 
-echo -n "sanity check success"; sleep 1; echo " . . . we hope" | pv -qL 5 | lolcat
+# Loop through the packages.txt file and populate missing_pkg array
+missing_pkgs=()  
+
+while IFS= read -r package
+do
+  if dpkg -s "$package" > /dev/null 2>&1 ; then
+    echo "skipping $package ... already installed"
+  else
+    echo "missing: $package"
+    missing_pkg+=$package
+  fi
+done < $PACKAGE_LIST
+
+case ${#missing_pkgs[@]} in
+  0) 
+    echo "Success. No missing packages"
+    ;;
+  1)
+    echo "Just missing 1 package: $missing_pkgs"
+    ;;
+  *)
+    echo "Missing ${#missing_pkgs[@]} packages ... update / install time"
+    ;;
+esac
+
+if [[ ${#missing_pkgs[@]} > 0 ]]; then
+  # Update package list to ensure packages are from the latest repository
+  echo "Updating apt package database"
+  if ! sudo apt update; then
+      echo -e "${RED}Error: Failed to update package lists.${NC}"
+      exit 1
+  else
+      echo -e "${GREEN}Package lists updated successfully.${NC}"
+  fi
+
+  echo sudo apt install "${missing_pkg[@]}"
+  if [ $? -eq 0 ]; then
+    echo -e "${GREEN}Missing packages installed successfully.${NC}"
+  else
+    echo -e "${RED}Failed to install all missing packages.${NC}"
+    exit 1
+  fi
+fi
+
+#############################################################
+# Bootstrapping & sanity check completed ... silly finish   #
+#############################################################
+
+figlet "T3X ready" | lolcat
+echo -n "sanity check success"; sleep 1; 
+echo " . . . we hope" | pv -qL 5 | lolcat

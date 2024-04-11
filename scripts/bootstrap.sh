@@ -99,11 +99,15 @@ echo "Start: adding skel/t3x.bash.d to ~/.bash.d"
 for tfile in skel/t3x.bash.d/* ; do
   fname=$(basename $tfile)
   if [ ! -f $HOME/.bash.d/$fname ]; then
+    echo -n "  "
     cp -v $tfile $HOME/.bash.d/
   else
     if $(diff $tfile $HOME/.bash.d/$fname > /dev/null); then
       echo "  $fname exists and is same"
     else
+      echo "  ### $fname exists and is different from t3x: "
+      diff --color $tfile $HOME/.bash.d/$fname
+      echo "  ###"
       agree "  $fname different -- replace with t3x version?"
       if [ $? -eq 0 ]; then
         cp -v $tfile $HOME/.bash.d
@@ -115,6 +119,24 @@ for tfile in skel/t3x.bash.d/* ; do
 done
 
 echo "##############################################"
-echo "          t3x bootstrap completed."
-echo "        close the terminal and re-open it"
+echo "         basic t3x bootstrap completed."
 echo "##############################################"
+
+
+#############################################################
+#                        SANITY CHECK                       #
+#############################################################
+
+for I in 1.8 1.5 1.2 1 0.8 0.5 0.3; do
+  sleep $I; echo -n ".";
+done
+echo " starting the crazy fun part ... sanitycheck.sh"
+
+cd $HOME/t3x/
+./scripts/sanity.sh
+
+#############################################################
+# Bootstrapping & sanity check completed ... silly finish   #
+#############################################################
+
+echo "T3X bootstrap completed ... happy hacking!!" | pv -qL 7 | lolcat
