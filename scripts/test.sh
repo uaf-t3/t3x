@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-t3ize_sh="${0%/*}/../lib/t3ize.sh"
-source "$t3ize_sh"
+
+eval $(t3x -E)
 
 info "information message"
 debug "debug message"

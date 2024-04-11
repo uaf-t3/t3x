@@ -4,7 +4,6 @@
 # T3X_RUN=false  # disable running of commands (pretends success)
 
 T3X_DEBUG=${T3X_DEBUG:-"false"} # Default quiet mode
-
 SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE) > /dev/null; pwd)
 T3X_DIR=$(realpath $SCRIPT_DIR/../)
 T3X_LIB_DIR=$(realpath $T3X_DIR/lib)
@@ -14,12 +13,26 @@ function t3x_tools_list() {
   t3xtools=()
   for tool in $(ls $T3X_DIR/tools/*/*.t3x | sort -n); do
     tool_name=$(basename $tool .t3x)
-    t3xtools+=("$tool_name")
+    # skip any .t3x files not matching tools/NAME/NAME.t3x pattern
+    if [ -f $T3X_DIR/tools/$tool_name/$tool_name.t3x ]; then
+      t3xtools+=("$tool_name")
+    fi
   done
-  echo -n "t3x tool list: "
-  printf "%s" "${t3xtools[0]}"    # first element
-  printf ", %s" "${t3xtools[@]:1}" # remaining elements prefixed by ,
-  echo 
+
+  case ${#t3xtools[@]} in
+    0) 
+      echo "Yikes! No t3x tools available?!  Something is wonky - report this bug"
+      ;;
+    1) 
+      echo "Only one t3x tool available: $t3xtools"
+      ;;
+    *) 
+      echo -n "t3x tool list: "
+      printf "%s" "${t3xtools[0]}"    # first element
+      printf ", %s" "${t3xtools[@]:1}" # remaining elements prefixed by ,
+      echo 
+      ;;
+  esac
 }
 
 # if it doesn't exist, check for a function of the same name in the t3ize.sh file
@@ -42,6 +55,7 @@ while [[ $# -gt 0 ]]; do
       echo "   -T|--t3sh      # realpath of t3ize.sh"
       echo "   -d|--debug     # enable debug messages"
       echo "   -D|--dryrun    # will not run commands : warning limited to t3ized runs"
+      echo "   -E|--eval      # t3xize your scripts: eval \$(t3x -E)"
       echo "   --list-tools   # provide a list of t3x tools"
       echo "   --list-scripts # provide a list of t3x tools"
       exit 0
@@ -80,6 +94,15 @@ while [[ $# -gt 0 ]]; do
       while_loop_done=true
       break;  # just let the rest of the arguments carry on
       ;;
+    -E|--eval)
+      echo '# t3ize your scripts with: eval $(t3x -E)'
+      echo "T3X_DEBUG=${T3X_DEBUG}"
+      echo "SCRIPT_DIR=${SCRIPT_DIR}"
+      echo "T3X_DIR=${T3X_DIR}"
+      echo "T3X_LIB_DIR=${T3X_LIB_DIR}"
+      echo "source $T3X_LIB_DIR/t3ize.sh"
+      exit
+      ;;
     *)
       keep_args+=("$1")
       shift
@@ -102,6 +125,7 @@ fi
 
 debug "t3x : T3IZE_SCRIPTS_DIR=$T3IZE_SCRIPTS_DIR   T3IZE_LIB_DIR=$T3IZE_LIB_DIR"  
 if (( $# == 0 )); then
+  cowsay "T3X ????" | lolcat
   boom "Nothing asked for.  Try: t3x --help"
 fi
 
@@ -120,7 +144,7 @@ if [ -f "$script" ]; then
   exit $?
 fi
 
-t3xtool="$T3X_DIR/$command/$command.t3x"
+t3xtool="$T3X_DIR/tools/$command/$command.t3x"
 if [ -f $t3xtool ]; then
   debug "found $command tool: $t3xtool"
   $t3xtool $@
