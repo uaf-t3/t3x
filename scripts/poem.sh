@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # just fun
-t3ize_sh="${0%/*}/../lib/t3ize.sh"
-source "$t3ize_sh"
+
+source $(t3x -T)
 
 require_command "pv"
 require_command "lolcat"
@@ -14,7 +14,7 @@ echo " # !!! Amidst a labyrinth of code ...     #
  #         simplicity a forgotten art ..  #
  # the wizards wander                     #
  #                    smiling             #
- #  trapped in a T3A dream  !!!           #" \
+ #  trapped in a T3X dream  !!!           #" \
  | pv -qL $[20+(-2 + RANDOM%5)] | lolcat &&
 echo " ##########################################  " | lolcat
 sleep 1
