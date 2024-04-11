@@ -104,6 +104,12 @@ function run() {
   return $RETVAL;
 }
 
+function sudo_run() {
+  echo "SUDO run of: $1"
+  sleep 0.5
+  run "sudo $1"
+}
+
 
 function run_install_unless() {
   got_command $2

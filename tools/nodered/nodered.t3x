@@ -47,6 +47,8 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+set -- ${keep_args[@]}
+
 command=$1
 debug "command=$command"
 shift
