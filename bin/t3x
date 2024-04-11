@@ -123,7 +123,9 @@ fi
 
 debug "t3x : T3IZE_SCRIPTS_DIR=$T3IZE_SCRIPTS_DIR   T3IZE_LIB_DIR=$T3IZE_LIB_DIR"  
 if (( $# == 0 )); then
+  figlet "T 3 X" 
   cowsay "T3X ????" | lolcat
+  echo "-----------------------------------"
   boom "Nothing asked for.  Try: t3x --help"
 fi
 

@@ -5,29 +5,6 @@ TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
 cowsay "Tool time with $TOOL_NAME" | lolcat
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)  
 
-function scripts_list() {
-  scripts=()
-  for script in $(ls $SCRIPT_DIR/scripts/*.sh 2> /dev/null | sort -n ); do
-    script_name=$(basename $script .sh)
-    scripts+=("$script_name")
-  done
-
-  case ${#scripts[@]} in
-    0) 
-      echo "   No scripts found ... Something is wonky - report this bug"
-      ;;
-    1) 
-      echo "   Only one script available: $scripts"
-      ;;
-    *) 
-      echo -n "  Scripts available: "
-      printf "%s" "${scripts[0]}"    # first element
-      printf ", %s" "${scripts[@]:1}" # remaining elements prefixed by ,
-      echo 
-      ;;
-  esac
-}
-
 just_exit=false
 args_collected=false
 while_loop_done=false
@@ -41,8 +18,8 @@ while [[ $# -gt 0 ]]; do
     help)
       shift
       echo "usage: pi [ARGS] COMMAND [ARGS]"
-      echo "   help      # this help"
-      scripts_list
+      echo "  help      # this help"
+      t3x_scripts_list $SCRIPT_DIR
       exit 0
       ;;
     ---)

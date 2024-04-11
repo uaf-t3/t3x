@@ -152,3 +152,27 @@ function require_root
 		exit 1
 	fi
 }
+
+function t3x_scripts_list() {
+  SCRIPTS_DIR=${1:-$SCRIPT_DIR}
+  scripts=()
+  for script in $(ls $SCRIPTS_DIR/scripts/*.sh 2> /dev/null | sort -n ); do
+    script_name=$(basename $script .sh)
+    scripts+=("$script_name")
+  done
+
+  case ${#scripts[@]} in
+    0) 
+      echo   "  No scripts found ... Something is wonky - report this bug"
+      ;;
+    1) 
+      echo   "  Only one script available: $scripts"
+      ;;
+    *) 
+      echo   "  Scripts available: "
+      printf "    %s" "${scripts[0]}"    # first element
+      printf ", %s" "${scripts[@]:1}" # remaining elements prefixed by ,
+      echo 
+      ;;
+  esac
+}
