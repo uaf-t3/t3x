@@ -18,7 +18,7 @@ PACKAGE_LIST="$T3X_LIB_DIR/packages.txt"
 debug PACKAGE_LIST=$PACKAGE_LIST
 
 # Loop through the packages.txt file and populate missing_pkg array
-missing_pkgs=()  
+declare -a missing_pkgs
 
 while IFS= read -r package
 do
@@ -26,13 +26,15 @@ do
     echo "skipping $package ... already installed"
   else
     echo "missing: $package"
-    missing_pkg+=$package
+    missing_pkgs+=("$package")
   fi
 done < $PACKAGE_LIST
 
+echo "echo missing_pkgs: ${missing_pkgs[@]}"
+
 case ${#missing_pkgs[@]} in
   0) 
-    echo "Success. No missing packages"
+    echo "${GREEN}Success. No missing packages${NC}"
     ;;
   1)
     echo "Just missing 1 package: $missing_pkgs"
@@ -42,19 +44,21 @@ case ${#missing_pkgs[@]} in
     ;;
 esac
 
-if [[ ${#missing_pkgs[@]} > 0 ]]; then
+if (( ${#missing_pkgs[@]} > 0 )); then
   # Update package list to ensure packages are from the latest repository
   echo "Updating apt package database"
   if ! sudo apt update; then
       echo -e "${RED}Error: Failed to update package lists.${NC}"
       exit 1
   else
-      echo -e "${GREEN}Package lists updated successfully.${NC}"
+      echo -e "${GREEN}Database list of packages updated successfull.${NC}"
   fi
 
-  echo sudo apt install "${missing_pkg[@]}"
+  echo "sudo apt install ${missing_pkgs[@]}"
+  sudo apt install ${missing_pkgs[@]}
   if [ $? -eq 0 ]; then
-    echo -e "${GREEN}Missing packages installed successfully.${NC}"
+    cowsay "successfully installed missing packages" | lolcat
+    sleep 2
   else
     echo -e "${RED}Failed to install all missing packages.${NC}"
     exit 1
