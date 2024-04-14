@@ -1,12 +1,14 @@
 #!/usr/bin/bash
 
 figlet "STARSHIP!!!" | lolcat
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 
 case $1 in 
   setup)
     sleep 1
-    SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" &> /dev/null & pwd )"
     cd $SCRIPT_DIR
+    echo "cd $(pwd)"
+    echo "launching setup-starship.sh"
     ./setup-starship.sh
     if [ $? -eq 0 ]; then
       sleep 2
