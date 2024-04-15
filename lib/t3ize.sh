@@ -1,14 +1,15 @@
 # to be sourced from the t3x (or other) commands
 
-# Quick check if all the key variables are set already ... and return if so
-if [[ -n "$T3X_SCRIPTS_DIR" && -n "$T3X_LIB_DIR" && -n "$T3X_SCRIPTS_DIR" ]]; then
+if [[ ! -n "_T3XIZE_LOADED" ]]; then
   return
+else
+  _T3XIZE_LOADED=true
 fi
 
 # figure out the location of this t3ize.sh file and include the common functions relative to it.
 # this is a bit of a hack, but it works for now.
-T3X_LIB_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-T3X_DIR=$( cd "$(dirname "${BASH_SOURCE[0]}")/../" && pwd )
+T3X_LIB_DIR=$( cd $( dirname "${BASH_SOURCE[0]}" ) && pwd )
+T3X_DIR=$( cd $(dirname $BASH_SOURCE[0])/../ > /dev/null; pwd)
 T3X_VERSION=$(cat $T3X_LIB_DIR/../VERSION)
 
 # Want more messages in life? Try running like:

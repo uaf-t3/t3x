@@ -119,7 +119,7 @@ if [ "$just_exit" == "true" ]; then
   exit 0
 fi
 
-debug "t3x : T3IZE_SCRIPTS_DIR=$T3IZE_SCRIPTS_DIR   T3IZE_LIB_DIR=$T3IZE_LIB_DIR"  
+debug "t3x : T3_SCRIPTS_DIR=$T3X_SCRIPTS_DIR   T3X_LIB_DIR=$T3X_LIB_DIR"  
 if (( $# == 0 )); then
   figlet "T 3 X" 
   cowsay "T3X ????" | lolcat
@@ -145,11 +145,12 @@ fi
 t3xtool="$T3X_DIR/tools/$command/$command.t3x"
 if [ -f $t3xtool ]; then
   debug "found $command tool: $t3xtool"
+  echo "t3x calling: $( basename $t3xtool ) ${@} "
   $t3xtool $@
   if [ $? -eq 0 ]; then
     exit 0
   else
-    echo "T3X command failed: $command"
+    warn "T3X command failed: $command"
     exit $retval
   fi
 fi

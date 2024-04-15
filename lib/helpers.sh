@@ -16,7 +16,7 @@ function warn {
 # export T3X_DEBUG=true # to cause info messages to show up
 function debug {
   if [ "$T3X_DEBUG" != false ]; then
-    echo "# INFO: ${1}"
+    echo "# DEBUG: ${1}"
     sleep 0.1
   fi
 }

@@ -2,21 +2,25 @@
 source $(t3x -T)
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 
-slow_lol "LOCKDOWN"
-#figlet "LOCKDOWN" | lolcat
-#sleep 1
+#slow_lol "T3X Raspberry Pi lockdown initiated"
 
-disable_ssh() {
+
+disable-ssh() {
+  slow_lol disable-ssh
   t3x pi ssh-disable # raspi-config style
 }
 
-disable_vnc() {
+disable-vnc() {
+  slow_lol disable-vnc
+  t3x pi vnc-disable
   echo raspi-config style vnc disable
-  
 }
 
-enable_firewall() {
-  echo enable_firewall
+enable-firewall() {
+  slow_lol enable-firewall
+  t3x pi ufw-enable
+  apt_update
+  apt install ufw
   # install ufw
   # turn it on
   # lock down everything
@@ -27,24 +31,27 @@ bad_password_check() {
   echo "bad password check"
 }
 
-nodered_lockdown() {
+nodered-lockdown() {
   # TODO: just call: t3x nodered lockdown
-  echo "TODO: t3x nodred lockdown"
+  echo "TODO: t3x nodered lockdown"
 }
 
-
+info "lockdown: $1"
 case $1 in
   check)
     ;;
   full) 
+    disable-ssh
+    disable-vnc
+    enable-ufw
     ;;
   ssh)
-    disable_ssh
+    disable-ssh
     ;;
   vnc)
-    disable_vnc
+    disable-vnc
     ;;
   *)
-    echo "pickles"
+    echo "check | full | ..."
     ;;
 esac
