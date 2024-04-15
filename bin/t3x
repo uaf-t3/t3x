@@ -135,22 +135,21 @@ debug "command=$command"
 shift
 
 script="$T3X_DIR/scripts/$command.sh"
-debug "checking for script=$script"
 if [ -f "$script" ]; then
-  info "running script $script"
+  debug "running script $script"
   $script $@
   exit $?
 fi
 
 t3xtool="$T3X_DIR/tools/$command/$command.t3x"
 if [ -f $t3xtool ]; then
-  debug "found $command tool: $t3xtool"
-  echo "t3x calling: $( basename $t3xtool ) ${@} "
+  debug "#TOOL#  $( basename $t3xtool ) ${@} "
   $t3xtool $@
-  if [ $? -eq 0 ]; then
+  retval=$?
+  if [ $retval -eq 0 ]; then
     exit 0
   else
-    warn "T3X command failed: $command"
+    warn "T3X tool returned error code: $(basename $t3xtool) ${@}"
     exit $retval
   fi
 fi

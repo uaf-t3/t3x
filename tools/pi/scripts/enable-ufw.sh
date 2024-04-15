@@ -11,7 +11,7 @@ fi
 
 if [ -f $HOME/.t3x/nolockdown ]; then
   slow_lol "~/.t3x/nolockdown exists ... skipping enabling ufw"
-  exit 1
+  exit 0
 fi
 
 if ! sudo ufw status | grep -qw "active"; then

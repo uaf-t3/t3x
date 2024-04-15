@@ -3,7 +3,7 @@ source $(t3x -T)
 
 if [ -f $HOME/.t3x/nolockdown ]; then
   slow_lol "~/.t3x/nolockdown exists ... skipping lockdown of ssh"
-  exit 1
+  exit 0
 fi
 
 sudo_run "update-rc.d ssh disable" && SSH_DISABLE=true
