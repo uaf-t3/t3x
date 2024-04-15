@@ -17,13 +17,7 @@ disable-vnc() {
 }
 
 enable-firewall() {
-  slow_lol enable-firewall
   t3x pi ufw-enable
-  apt_update
-  apt install ufw
-  # install ufw
-  # turn it on
-  # lock down everything
 }
 
 bad_password_check() {
