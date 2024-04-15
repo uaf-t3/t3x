@@ -10,10 +10,12 @@ disable_ssh() {
 }
 
 disable_vnc() {
-  # raspi-config style
+  echo raspi-config style vnc disable
+  
 }
 
 enable_firewall() {
+  echo enable_firewall
   # install ufw
   # turn it on
   # lock down everything
@@ -21,10 +23,12 @@ enable_firewall() {
 
 bad_password_check() {
   # t3x pi
+  echo "bad password check"
 }
 
 nodered_lockdown() {
   # TODO: just call: t3x nodered lockdown
+  echo "TODO: t3x nodred lockdown"
 }
 
 

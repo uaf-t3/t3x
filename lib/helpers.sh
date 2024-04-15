@@ -162,8 +162,8 @@ function require_root
 function t3x_scripts_list() {
   SCRIPTS_DIR=${1:-$SCRIPT_DIR}
   scripts=()
-  for script in $(ls $SCRIPTS_DIR/scripts/*.sh 2> /dev/null | sort -n ); do
-    script_name=$(basename $script .sh)
+  for script in $(ls $SCRIPTS_DIR/scripts/*.t3x 2> /dev/null | sort -n ); do
+    script_name=$(basename $script .t3x)
     scripts+=("$script_name")
   done
 
