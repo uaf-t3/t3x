@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE) > /dev/null; pwd)
 
 # ANSI color codes
 RED='\033[0;31m'
@@ -6,7 +7,7 @@ GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
 # File containing the list of npm packages to install
-NODE_LIST="$(dirname "$0")/../lib/nodes.txt"
+NODE_LIST="${SCRIPT_DIR}/../files/nodes.txt"
 
 if ! command -v npm > /dev/null; then
   echo "missing npm. Installing via apt"

@@ -4,10 +4,8 @@
 # T3X_RUN=false  # disable running of commands (pretends success)
 
 T3X_DEBUG=${T3X_DEBUG:-"false"} # Default quiet mode
-SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE) > /dev/null; pwd)
-T3X_DIR=$(realpath $SCRIPT_DIR/../)
-T3X_LIB_DIR=$(realpath $T3X_DIR/lib)
-source $T3X_LIB_DIR/t3ize.sh
+SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE[0]) > /dev/null; pwd)
+source $SCRIPT_DIR/../lib/t3ize.sh
 
 function t3x_tools_list() {
   t3xtools=()
@@ -121,9 +119,11 @@ if [ "$just_exit" == "true" ]; then
   exit 0
 fi
 
-debug "t3x : T3IZE_SCRIPTS_DIR=$T3IZE_SCRIPTS_DIR   T3IZE_LIB_DIR=$T3IZE_LIB_DIR"  
+debug "t3x : T3_SCRIPTS_DIR=$T3X_SCRIPTS_DIR   T3X_LIB_DIR=$T3X_LIB_DIR"  
 if (( $# == 0 )); then
+  figlet "T 3 X" 
   cowsay "T3X ????" | lolcat
+  echo "-----------------------------------"
   boom "Nothing asked for.  Try: t3x --help"
 fi
 
@@ -135,25 +135,24 @@ debug "command=$command"
 shift
 
 script="$T3X_DIR/scripts/$command.sh"
-debug "checking for script=$script"
 if [ -f "$script" ]; then
-  info "running script $script"
+  debug "running script $script"
   $script $@
   exit $?
 fi
 
 t3xtool="$T3X_DIR/tools/$command/$command.t3x"
 if [ -f $t3xtool ]; then
-  debug "found $command tool: $t3xtool"
+  debug "#TOOL#  $( basename $t3xtool ) ${@} "
   $t3xtool $@
-  if [ $? -eq 0 ]; then
+  retval=$?
+  if [ $retval -eq 0 ]; then
     exit 0
   else
-    echo "T3X command failed: $command"
+    warn "T3X tool returned error code: $(basename $t3xtool) ${@}"
     exit $retval
   fi
 fi
 
 error "no t3x command found: $command"
-
 # if it exists, execute it

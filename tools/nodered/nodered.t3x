@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 source $(t3x -T)
-debug "hi"
+
 TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
+cowsay "Tool time with $TOOL_NAME" | lolcat
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)  
 
 just_exit=false
@@ -16,10 +17,23 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     help)
       shift
-      echo "usage: pi [ARGS] COMMAND [ARGS]"
+      echo "usage: nodered [ARGS] COMMAND [ARGS]"
       echo "  help      # this help"
+      echo "  setup     #  "
+      echo "  lockdown  #  "
+      echo "  unlock    #  "
+      echo 
       t3x_scripts_list $SCRIPT_DIR
       exit 0
+      ;;
+    setup)
+      echo "setting up t3 nodered"
+      ;;
+    lockdown)
+      info "locking down" 
+      ;;
+    unlock)
+      boom "TODO: Not implimented (feel free to hack on this code)"
       ;;
     ---)
       keep_args=(${keep_args[@]} "$@")
@@ -40,13 +54,11 @@ debug "command=$command"
 shift
 
 script="$SCRIPT_DIR/scripts/$command.sh"
-t3xscript="$SCRIPT_DIR/scripts/$command.t3x"
 debug "checking for script=$script"
 if [ -f "$script" ]; then
+  info "running script $script"
   $script $@
   exit $?
-elif [ -f $t3xscript ]; then
-  $t3xscript $@
-  exit $?
 fi
+
 error "Error: No $command command .. try asking for help"

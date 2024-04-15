@@ -7,7 +7,7 @@ function agree() {
     echo -n "$1 : (y/n) : "
     read answer
     if [ $answer == "n" ]; then
-      return 1;
+      exit 1
     elif [ $answer == 'y' ]; then
       return 0;
     fi
@@ -133,7 +133,7 @@ done
 echo " starting the crazy fun part ... sanitycheck.sh"
 
 cd $HOME/t3x/
-./scripts/sanity.sh
+./scripts/sanity.t3x
 
 #############################################################
 # Bootstrapping & sanity check completed ... silly finish   #

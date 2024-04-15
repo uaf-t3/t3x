@@ -1,0 +1,39 @@
+#!/usr/bin/bash
+source $(t3x -T)
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
+
+full-lockdown() {
+  local failed=()
+  echo "Locking down ssh"
+  t3x pi ssh-disable    || failed+=("ssh-disable")
+  echo "Locking down VNC"
+  t3x pi vnc-disable    || failed+=("vnc-disable")
+  echo "Enabling firewall"
+  t3x pi enable-ufw     || failed+=("enable ufw")
+  echo "Verifying default 'raspberry' password not in use"
+  t3x pi password-check || failed+=("password check")
+
+  echo "Lockdown steps done"
+
+  if (( ${#failed[@]} > 0 )); then
+    echo "Failed to lockdown ${#failed[@]} : "
+    for I in $failed[@]; do
+      echo -e "${RED}  t3x pi $I ${NC}"
+    done
+    exit 1
+  else
+    echo -e "${GREEN}t3x pi lockdown succeeded${NC}"
+    slow_lol "t3x pi lockdown completed ... happy hacking"
+    exit 0
+  fi
+}
+
+debug "lockdown: $1"
+case $1 in
+  full) 
+    full-lockdown
+    ;;
+  *)
+    t3x pi lockdown full
+    ;;
+esac
