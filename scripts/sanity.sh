@@ -34,7 +34,7 @@ echo "echo missing_pkgs: ${missing_pkgs[@]}"
 
 case ${#missing_pkgs[@]} in
   0) 
-    echo "${GREEN}Success. No missing packages${NC}"
+    echo -e "${GREEN}Success. No missing packages${NC}"
     ;;
   1)
     echo "Just missing 1 package: $missing_pkgs"
