@@ -1,0 +1,13 @@
+neofetch
+figlet
+toilet
+cowsay
+fortune-mod
+lolcat
+jq
+curl
+git
+vim
+tmux
+htop
+pv

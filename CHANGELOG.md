@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > `## [Maj.Min.Tweak] - YYYY-MM-DD`
 
 ## [Unreleased]
+
+[0.1.0] - 2024-04-22
+
+Initial public release 
+
 ### Added
 - CHANGELOG.md (this file)
 - primary interface command: `bin/t3x`
@@ -19,4 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - README.md structure
 - `sshdisable.sh` script
 - `poem.sh` for fun
-
+- `starship` installer added (with nerdfont)
+- `dectalk` installer added
+- `mu` installer added
+- `sanity` script
+- `t3x pi` tool

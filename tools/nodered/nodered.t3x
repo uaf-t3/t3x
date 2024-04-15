@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+source $(t3x -T)
+
+TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
+cowsay "Tool time with $TOOL_NAME" | lolcat
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)  
+
+just_exit=false
+args_collected=false
+while_loop_done=false
+declare -a keep_args
+
+while [[ $# -gt 0 ]]; do
+  if [ "$while_loop_done" == true ]; then
+    break # we hit the --- and just need to move on now
+  fi
+  case "$1" in
+    help)
+      shift
+      echo "usage: nodered [ARGS] COMMAND [ARGS]"
+      echo "  help      # this help"
+      echo "  setup     #  "
+      echo "  lockdown  #  "
+      echo "  unlock    #  "
+      echo 
+      t3x_scripts_list $SCRIPT_DIR
+      exit 0
+      ;;
+    setup)
+      echo "setting up t3 nodered"
+      ;;
+    lockdown)
+      info "locking down" 
+      ;;
+    unlock)
+      boom "TODO: Not implimented (feel free to hack on this code)"
+      ;;
+    ---)
+      keep_args=(${keep_args[@]} "$@")
+      while_loop_done=true
+      break;  # just let the rest of the arguments carry on
+      ;;
+    *)
+      keep_args+=("$1")
+      shift
+      ;;
+  esac
+done
+
+set -- ${keep_args[@]}
+
+command=$1
+debug "command=$command"
+shift
+
+script="$SCRIPT_DIR/scripts/$command.sh"
+debug "checking for script=$script"
+if [ -f "$script" ]; then
+  info "running script $script"
+  $script $@
+  exit $?
+fi
+
+error "Error: No $command command .. try asking for help"
