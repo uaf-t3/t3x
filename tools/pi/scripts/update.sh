@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 source $(t3x -T)
 
-figlet "T 3 X   PI" | lolcat
-echo "Update & upgrade packages"
+figlet "T 3 X   PI"
+slow_lol "Update & upgrade packages"
 sleep 1
 
 #verify_internet_access

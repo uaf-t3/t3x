@@ -2,6 +2,7 @@
 source $(t3x -T)
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 
+slow_lol "LOCKDOWN"
 #figlet "LOCKDOWN" | lolcat
 #sleep 1
 

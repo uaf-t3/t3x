@@ -7,7 +7,7 @@ function agree() {
     echo -n "$1 : (y/n) : "
     read answer
     if [ $answer == "n" ]; then
-      return 1;
+      exit 1
     elif [ $answer == 'y' ]; then
       return 0;
     fi

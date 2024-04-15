@@ -4,10 +4,8 @@
 # T3X_RUN=false  # disable running of commands (pretends success)
 
 T3X_DEBUG=${T3X_DEBUG:-"false"} # Default quiet mode
-SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE) > /dev/null; pwd)
-T3X_DIR=$(realpath $SCRIPT_DIR/../)
-T3X_LIB_DIR=$(realpath $T3X_DIR/lib)
-source $T3X_LIB_DIR/t3ize.sh
+SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE[0]) > /dev/null; pwd)
+source $SCRIPT_DIR/../lib/t3ize.sh
 
 function t3x_tools_list() {
   t3xtools=()
@@ -157,5 +155,4 @@ if [ -f $t3xtool ]; then
 fi
 
 error "no t3x command found: $command"
-
 # if it exists, execute it

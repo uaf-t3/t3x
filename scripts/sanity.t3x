@@ -30,8 +30,6 @@ do
   fi
 done < $PACKAGE_LIST
 
-echo "echo missing_pkgs: ${missing_pkgs[@]}"
-
 case ${#missing_pkgs[@]} in
   0) 
     echo -e "${GREEN}Success. No missing packages${NC}"

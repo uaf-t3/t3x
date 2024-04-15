@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 source $(t3x -T)
 
-
 warn "Enabling SSH opens up remote access to the Pi. This is a security concern."
 sleep 2
 info "Before doing this please review the following:
@@ -11,7 +10,7 @@ info "Before doing this please review the following:
 sleep 1.5
 agree "Continue and enable ssh?"
 if [ $? -eq 0 ]; then
-  echo "Use responsibly"
+  slow_lol "Enabling SSH ... use responsibly"
   sleep 3
 else
   cowsay "Good plan... thanks!  Happy hacking"
