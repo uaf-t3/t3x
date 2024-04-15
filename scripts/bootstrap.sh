@@ -133,7 +133,7 @@ done
 echo " starting the crazy fun part ... sanitycheck.sh"
 
 cd $HOME/t3x/
-./scripts/sanity.sh
+./scripts/sanity.t3x
 
 #############################################################
 # Bootstrapping & sanity check completed ... silly finish   #
