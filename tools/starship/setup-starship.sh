@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" &> /dev/null & pwd )"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 cd $SCRIPT_DIR
 
 DEFAULT_TOMLFILE=files/starship-t3x.toml
@@ -54,4 +54,10 @@ if [ ! -f $HOME/.bash.d/starship.sh ]; then
 fi
 
 ./setup-nerdfont.sh
-echo "### Finish: Starship.sh setup"
+if [ $? -eq 0 ]; then
+  echo "### Finish: Starship.sh setup"
+  exit 0
+else
+  echo "Error: setup-nerdfont.sh failed ... you may not have needed fonts for full experience"
+  exit 1
+fi

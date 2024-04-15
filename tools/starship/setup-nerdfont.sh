@@ -24,21 +24,29 @@ if ! command -v wget > /dev/null 2>&1 ; then
   exit 1
 fi
 
+
 cd $ZIPCACHE
 if [ -f "$ZIPFILE" ]; then
   echo "Skipping download (file exists): $ZIPFILE"
 else
   echo "Starting download $FONTZIP_URL"
   wget --quiet "$FONTZIP_URL" 
-  if [ $? - eq 0 ]; then
+  if [ $? -eq 0 ]; then
     echo "Fatal: Download of font failed: wget $FONTZIP_URL"
     exit 1
   fi
 fi 
 
-FONT_TTF=$(unzip -l $ZIPFILE | grep .ttf | head -n 1 | awk '{print $4}')
+FONT_TTF=`unzip -l $ZIPFILE | grep \.ttf | head -n 1 | awk '{print $4}'`
+if [ -z "${FONT_TTF}" ]; then
+  echo "Error finding a TTF font in zip $ZIPFILE"
+  echo "  dir: $(pwd)"
+  echo "  zip: $ZIPFILE"
+  exit 1
+fi
+
 cd ..
-if [ -f $FONT_TTF ]; then
+if [ -f "$FONT_TTF" ]; then
   echo "Skipping unzip of $ZIPFILE ... file exists: $FONT_TTF"
 else
   echo "Starting unzip $ZIPFILE in `pwd`"
@@ -57,19 +65,23 @@ else
   fi
 fi
 
-LXT_CONF="$HOME/.config/lxterminal/lxterminal.conf"
-LXT_DIR=$(dirname $LXT_CONF)
-if [ ! -f "${LXT_CONF}" ]; then
-  echo "No lxterminal.conf found ... putting t3x version in place"
-  mkdir -p $LXT_DIR
-  cp -v $SCRIPT_DIR/files/lxterminal.conf $LXT_DIR/
-else
-  echo "Found existing lxterminal.conf ... checking for Nerds"
-  if grep "Nerd" $LXT_CONF > /dev/null; then
-    echo "Nerds found in lxterminal.conf ... skipping reconfiguring it"
-  else
-    echo "No nerds found in lxterminal.conf ... backing up & replacing"
-    cp -v "$LXT_CONF" "${LXT_CONF}.orig"
+if command -v lxterminal; then
+  LXT_CONF="$HOME/.config/lxterminal/lxterminal.conf"
+  LXT_DIR=$(dirname $LXT_CONF)
+  if [ ! -f "${LXT_CONF}" ]; then
+    echo "No lxterminal.conf found ... putting t3x version in place"
+    mkdir -p $LXT_DIR
     cp -v $SCRIPT_DIR/files/lxterminal.conf $LXT_DIR/
+  else
+    echo "Found existing lxterminal.conf ... checking for Nerds"
+    if grep "Nerd" $LXT_CONF > /dev/null; then
+      echo "Nerds found in lxterminal.conf ... skipping reconfiguring it"
+    else
+      echo "No nerds found in lxterminal.conf ... backing up & replacing"
+      cp -v "$LXT_CONF" "${LXT_CONF}.orig"
+      cp -v $SCRIPT_DIR/files/lxterminal.conf $LXT_DIR/
+    fi
   fi
+else
+  echo "Skipping lxterminal configuration ... lxterminal is not installed"
 fi
