@@ -27,7 +27,7 @@ if [ ! "$CURRENT" == "main" ]; then
   if [ "$1" == "-f" ]; then 
     slow_lol "Warning: not on main branch .... but you said -f ... let us keep going"
   else
-  slow_lol "Error: Not on main branch ... overide this with -f"
+    slow_lol "Error: Not on main branch ... overide this with -f"
     exit 1
   fi
 fi
@@ -53,7 +53,8 @@ fi
 for branch in $(git branch --merged @{u} | grep -v "\*\|main|head|$CURRENT" ); do
   slow_lol "Branch ${branch} is merged into the remote tracking branch and can be deleted"
   sleep 1
-  while true ; do
+  cbranch=$branch
+  while [[ "$branch" == "$cbranch" ]] ; do
     read -p "Do you want to delete $branch? [yes/no(skip)/quit] (y/n/q): " answer
     answer=$(echo $answer | tr '[:upper]' '[:lower]')
 
@@ -62,6 +63,7 @@ for branch in $(git branch --merged @{u} | grep -v "\*\|main|head|$CURRENT" ); d
         output=$(git branch -d $branch)
         if [ $? -eq 0 ]; then
           slow_lol "$branch deleted"
+          cbranch=""
         else
           slow_lol "Error: Failure in deleting $branch"
           slow_lol "$output"
