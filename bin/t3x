@@ -135,9 +135,16 @@ debug "command=$command"
 shift
 
 script="$T3X_DIR/scripts/$command.sh"
+script3x="$T3X_DIR/scripts/$command.t3x"
 if [ -f "$script" ]; then
   debug "running script $script"
   $script $@
+  exit $?
+fi
+
+if [ -f "$script3x" ]; then
+  debug "running script $script3x"
+  $script3x $@
   exit $?
 fi
 
