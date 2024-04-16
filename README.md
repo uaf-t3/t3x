@@ -1,7 +1,14 @@
 # T3X
 The cuddly waffle toolset for T3 Raspberry Pi image creation & maintenance.
 
-This tool plays a crucial role in the Alaska T3 program and the T3 Alliance Raspberry Pi (RPi) ecosystem by focusing on cybersecurity. Given that T3 distributes Raspberry Pi devices to various sites, it's essential to ensure these devices are secure. This project aims to fortify the security of these devices, protecting them from potential cyber threats. It's not just about providing technology; it's about providing technology that's safe and secure to use. This commitment to cybersecurity underscores the responsibility we hold towards our community, making this project a vital piece in the T3 Alliance RPi ecosystem.
+This tool augments the Alaska T3 program and the T3 Alliance Raspberry Pi (RPi) ecosystem by providing the `t3x` tool to assist in creating a standardized T3 Raspberry Pi platform.  The project has a few goals:
+- Improve our ability to configure and harden the operating system and services used in T3 PIs.
+- Ensure the ability to update and synchronize the recommended tools and configurations for T3 projects and RPi systems.
+- Provide a platform for T3 RPi hackers to share and engage with neat tools and solutions to problems that evolve what we can do together.
+- An interface to engaging with fun and silly things along with the serious stuff.
+
+> [!note] 
+> **Safe, Secure, Accessible & Fun:** The core mission of this project is to provide an interface that allows T3 learners to fortify the security and configuration of their devices, protecting them from potential cyber threats. It's not just about providing technology; it's about delivering safe and secure technology. Doing this should also be fun and adaptable to the evolving needs of the T3 community and their projects.
 
 ## Installation
 
@@ -15,7 +22,7 @@ cd t3x
 
 Trust the T3X CHEESE lab team? Recommended easy method:
 ```
-curl https://raw.github.com/uaf-t3/t3x/main/scripts/bootstrap.sh | bash -e
+curl https://raw.githubusercontent.com/uaf-t3/t3x/main/scripts/bootstrap.sh | bash -e
 ```
 
 ## `t3x` Usage
@@ -28,10 +35,9 @@ The `t3x` command offers an interface to a collection of scripts and tools.
 Gets t3x installed & into a good state by the following steps:
 - Verify functional access to the Internet
 - Ensures basic tools needed for bootstrap (git) are available
-- Fetches latest version of t3x `main` branch. 
+- Fetches the latest version of the t3x `main` branch. 
 - Setup `$HOME/.bash.d` folder. TODO: Wiki page on this!  
 - Use `.bash.d/t3x.sh` to ensure `$HOME/t3x/bin` is in `$PATH`
-
 
 ### Tools
 
@@ -76,11 +82,10 @@ See the [LICENSE.md](LICENSE.MD) file for full license.
 
 ## Credits & Sponsors
 
-- Seeds from the [Easybotics T3 rpi config script](https://github.com/easybotics/t3-rpi-config-script). 
-- TODO: List of funders or partners sponsoring development
+- Seeds from the [Easybotics T3 rpi config script](https://github.com/easybotics/t3-rpi-config-script).
 
 ## Contributors
 
-- [@dayne](https://github.com/dayne) - T3X Innovation  Architect
+- [@dayne](https://github.com/dayne) - T3X Innovation Architect
 - [@ItalianSquirel](https://github.com/ItalianSquirel) - T3X Code Conjurer
 - [@SushiFanta](https://github.com/SushiFanta) - T3X Algorithm Alchemist
