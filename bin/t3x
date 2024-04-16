@@ -25,10 +25,13 @@ function t3x_tools_list() {
       echo "Only one t3x tool available: $t3xtools"
       ;;
     *) 
-      echo -n "t3x tool list: "
-      printf "%s" "${t3xtools[0]}"    # first element
-      printf ", %s" "${t3xtools[@]:1}" # remaining elements prefixed by ,
-      echo 
+      echo   
+      echo     "Tool list.        # usage: t3x [TOOL_NAME] [OPTIONS]"
+      for tool in ${t3xtools[@]}; do
+        echo   "   $tool"
+      done
+      #printf "            %s" "${t3xtools[0]}"    # first element
+      #printf ", %s" "${t3xtools[@]:1}" # remaining elements prefixed by ,
       ;;
   esac
 }
@@ -45,7 +48,7 @@ while [[ $# -gt 0 ]]; do
     break # we hit the --- and just need to move on now
   fi
   case "$1" in
-    -h|--help)
+    -h|--help|help)
       shift
       echo "usage: t3x [ARGS] COMMAND [ARGS]"
       echo "   -h|--help      # this help"
@@ -53,9 +56,9 @@ while [[ $# -gt 0 ]]; do
       echo "   -T|--t3sh      # realpath of t3ize.sh"
       echo "   -d|--debug     # enable debug messages"
       echo "   -D|--dryrun    # will not run commands : warning limited to t3ized runs"
-      echo "   -E|--env      # get the T3X env details"
-      echo "   --list-tools   # provide a list of t3x tools"
-      echo "   --list-scripts # provide a list of t3x tools"
+      echo "   -E|--env       # get the T3X env details"
+      t3x_scripts_list
+      t3x_tools_list
       exit 0
       ;;
     -V|--version)
@@ -80,7 +83,7 @@ while [[ $# -gt 0 ]]; do
       T3X_RUN=false
       ;;
     --list-scripts)
-      echo "not implimented"
+      t3x_scripts_list
       exit 1
       ;;
     --list-tools)
