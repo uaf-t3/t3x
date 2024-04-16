@@ -1,8 +1,7 @@
 # T3X
 The cuddly waffle toolset for T3 Raspberry Pi image creation & maintenance.
 
-> TODO words that set the context of this project and its role in the Alaska T3 program
-> & T3 Alliance RPi ecosystem
+This tool plays a crucial role in the Alaska T3 program and the T3 Alliance Raspberry Pi (RPi) ecosystem by focusing on cybersecurity. Given that T3 distributes Raspberry Pi devices to various sites, it's essential to ensure these devices are secure. This project aims to fortify the security of these devices, protecting them from potential cyber threats. It's not just about providing technology; it's about providing technology that's safe and secure to use. This commitment to cybersecurity underscores the responsibility we hold towards our community, making this project a vital piece in the T3 Alliance RPi ecosystem.
 
 ## Installation
 
@@ -10,7 +9,7 @@ Fully manual clone steps:
 ```
 git clone git@github.com:uaf-t3/t3x
 cd t3x
-# review the scripts starting with bootstrap.sh
+# Review the scripts starting with bootstrap.sh
 ./scripts/bootstrap.sh
 ```
 
@@ -27,13 +26,12 @@ The `t3x` command offers an interface to a collection of scripts and tools.
 
 #### `scripts/bootstrap.sh` 
 Gets t3x installed & into a good state by the following steps:
-- verify functional access to the Internet
-- ensures basic tools needed for bootstrap (git) are available
+- Verify functional access to the Internet
+- Ensures basic tools needed for bootstrap (git) are available
 - Fetches latest version of t3x `main` branch. 
 - Setup `$HOME/.bash.d` folder. TODO: Wiki page on this!  
 - Use `.bash.d/t3x.sh` to ensure `$HOME/t3x/bin` is in `$PATH`
 
-#### `scripts/
 
 ### Tools
 
