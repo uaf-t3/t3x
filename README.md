@@ -25,31 +25,49 @@ Trust the T3X CHEESE lab team? Recommended easy method:
 curl https://raw.githubusercontent.com/uaf-t3/t3x/main/scripts/bootstrap.sh | bash -e
 ```
 
+### Changes/Impacts of installing `T3X`
+
+- `.bashrc` will be setup to include `.bash.d/*.sh` scripts
+- `.bash.d/00-t3x.sh` will setup `$HOME/t3x/bin` in user `PATH`
+- `.bash.d/00-local.sh` will ensure `$HOME/.local/bin` is in user `PATH`
+- `.bash.d/(other).sh` other scripts added for quality of life or when a user choosed to include/add a new feature that augments. 
+
+Beyond that the impacts of T3X will depend on what tools from it you run.
+
 ## `t3x` Usage
 
 The `t3x` command offers an interface to a collection of scripts and tools.
 
 ### Scripts
 
-#### `scripts/bootstrap.sh` 
-Gets t3x installed & into a good state by the following steps:
+`t3x bootstrap` or `$HOME/t3x/scripts/bootstrap.sh` 
+- Gets t3x installed & into a good state by the following steps:
 - Verify functional access to the Internet
 - Ensures basic tools needed for bootstrap (git) are available
 - Fetches the latest version of the t3x `main` branch. 
-- Setup `$HOME/.bash.d` folder. TODO: Wiki page on this!  
-- Use `.bash.d/t3x.sh` to ensure `$HOME/t3x/bin` is in `$PATH`
+- Setup `$HOME/.bash.d` folder.
+- Use `.bash.d/00-t3x.sh` to ensure `$HOME/t3x/bin` is in `$PATH`
+
+`t3x update`
+- Attempt to update t3x using git
+
+`t3x sanity`
+- tries to ensure all the tool dependancies for t3x are done
+- this is done as part of bootstrap but can be run again later to ensure any new dependancies are available.
 
 ### Tools
 
 #### `t3x pi` 
 Tools to manage our pi.  Includes fun gems like:
-- [ ] `t3x pi setup`
-  - [ ] `t3x pi update`
-  - [ ] `t3x pi sanity`
+- [ ] `t3x pi setup` (TODO)
+  - [x] `t3x pi update`
   - [x] `t3x pi wallpaper`
-- [ ] `t3x pi lockdown`
+- [x] `t3x pi lockdown`
   - [ ] runs setup (and steps involved there)
-  - [ ] installs and setups firewall
+  - [x] `enable-wfw` installs and enables firewall
+  - [x] `ssh-disable` stops and disables SSH
+  - [x] `password-check` verifies default password not being used
+  - [x] `vnc-disable` stops and disables VNC
 
 #### `t3x starship`
 
