@@ -183,25 +183,30 @@ function require_root
 }
 
 function t3x_scripts_list() {
-  SCRIPTS_DIR=${1:-$SCRIPT_DIR}
+  SCRIPTS_DIR=${1:-$T3X_SCRIPTS_DIR}
+  debug "checking dir for *.t3x: $SCRIPTS_DIR"
   scripts=()
-  for script in $(ls $SCRIPTS_DIR/scripts/*.t3x 2> /dev/null | sort -n ); do
+  for script in $(ls $SCRIPTS_DIR/*.t3x 2> /dev/null | sort -n ); do
+    debug "$script found"
     script_name=$(basename $script .t3x)
     scripts+=("$script_name")
   done
 
   case ${#scripts[@]} in
     0) 
-      echo   "  No scripts found ... Something is wonky - report this bug"
+      echo   "No scripts available"
       ;;
     1) 
-      echo   "  Only one script available: $scripts"
+      echo   "Script available: $scripts"
       ;;
     *) 
-      echo   "  Scripts available: "
-      printf "    %s" "${scripts[0]}"    # first element
-      printf ", %s" "${scripts[@]:1}" # remaining elements prefixed by ,
       echo 
+      echo   "Scripts list:     # "
+      for script in ${scripts[@]}; do
+        echo "   $script"
+      done
+      #printf "    %s" "${scripts[0]}"    # first element
+      #printf ", %s" "${scripts[@]:1}" # remaining elements prefixed by ,
       ;;
   esac
 }
