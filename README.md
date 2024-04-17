@@ -52,8 +52,8 @@ The `t3x` command offers an interface to a collection of scripts and tools.
 - Attempt to update t3x using git
 
 `t3x sanity`
-- tries to ensure all the tool dependancies for t3x are done
-- this is done as part of bootstrap but can be run again later to ensure any new dependancies are available.
+- Tries to ensure all the tool dependancies for t3x are done
+- This is done as part of bootstrap but can be run again later to ensure any new dependancies are available.
 
 ### Tools
 
