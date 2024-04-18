@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+source $(t3x -T)
+
 function slow_lol() {
   msg="$1"
   msg_len=${#msg}
@@ -85,6 +87,30 @@ for branch in $(git branch --merged @{u} | grep -v "\*\|main|head|$CURRENT" ); d
     esac
   done
 done 
+printf "\n\n\n"
+sleep 1
+echo "Here is the remote branches: git branch -r -a"
+read -p "Do you want to run: git remote prune origin [yes/NO] (y/N): " answer
+answer=$(echo $answer | tr '[:upper]' '[:lower]')
+case $answer in
+  y | yes)
+    echo "Dry-run review first: git remote prune origin --dry-run"
+    run "git remote prune origin --dry-run"
+    read -p "Do you still want to run: git remote prune origin [yes/NO] (y/N): " answer
+    answer=$(echo $answer | tr '[:upper]' '[:lower]')
+    case $answer in
+      y | yes)
+        run "git remote prune origin"
+        ;;
+      *)
+        echo "Ok.. skipping remote prune"
+        ;;
+    esac
+    ;;
+  *)
+    echo "skipping git remote prune origin"
+    ;;
+esac
 printf "\n\n\n"
 slow_lol "######## DONE ########"
 sleep 0.5
