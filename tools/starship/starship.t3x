@@ -37,7 +37,7 @@ case $1 in
       echo "Checking for toml file: ${2}"
       if [  -f "$2" ]; then
         echo "Found file: $2"
-        STARSHIP_CONFIG=$2
+        STARSHIP_CONFIG="$(realpath $2)"
       fi
     fi
     DEFAULT_TOMLFILE="$SCRIPT_DIR/files/starship-t3x.toml"
