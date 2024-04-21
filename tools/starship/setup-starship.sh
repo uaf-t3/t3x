@@ -1,10 +1,20 @@
 #!/usr/bin/bash
+source $(t3x -T)
+
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 cd $SCRIPT_DIR
 
-DEFAULT_TOMLFILE=files/starship-t3x.toml
+# Install for this user ownly to avoid requiring sudo.
+BIN_DIR=$HOME/.local/bin
+DEFAULT_TOMLFILE=$SCRIPT_DIR/files/starship-t3x.toml
 TOMLFILE=${TOMLFILE:-$DEFAULT_TOMLFILE}
-export STARSHIP_CONFIG="$SCRIPT_DIR/$TOMLFILE"
+
+if [ ! -f $TOMLFILE ]; then
+  echo "Error: STARSHIP_CONFIG toml file does not exist: $TOMLFILE "
+  exit 1
+fi
+
+export STARSHIP_CONFIG=$TOMLFILE
 
 echo "### Start: Starship.sh installer & setup"
 sleep 0.7
@@ -15,7 +25,7 @@ else
   echo "Latest starship installer can be done like this:"
   echo "         curl -sS https://starship.rs/install.sh | sh"
   echo "Using a t3x cached copy that has been reviewed."
-  ./cache/starship.rs-install.sh
+  ./cache/starship.rs-install.sh -y
   if [ $? -eq 0 ]; then
     echo "Starship install successfull done"
   else

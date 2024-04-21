@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-
+source $(t3x -T)
 figlet "STARSHIP!!!" | lolcat
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 
@@ -21,7 +21,7 @@ case $1 in
     fi
     ;;
   launch)
-    if ! command -v starship ; then
+    if ! command -v starship > /dev/null ; then
       echo "Error: Starship not installed yet."
       echo "TODO: Hint: t3x starship install"
     fi
@@ -32,25 +32,21 @@ case $1 in
       echo "  fix with: t3x nerdfonts install"
     fi
     
-    # TODO swap this out for a t3x helper
-    SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" &> /dev/null & pwd )"
     echo $SCRIPT_DIR
-    
-    DEFAULT_TOMLFILE=files/starship-t3x.toml
-    TOMLFILE=${TOMLFILE:-$DEFAULT_TOMLFILE}
-    export STARSHIP_CONFIG="$SCRIPT_DIR/$TOMLFILE"
+    if [ -f $2 ];  then
+      STARSHIP_CONFIG=$2
+    else
+      DEFAULT_TOMLFILE="$SCRIPT_DIR/files/starship-t3x.toml"
+      TOMLFILE=${TOMLFILE:-$DEFAULT_TOMLFILE}
+      export STARSHIP_CONFIG="$TOMLFILE"
+    fi
     
     if [ ! -f $STARSHIP_CONFIG ]; then
       echo "404 File Not Found: STARSHIP_CONFIG=$STARSHIP_CONFIG"
       exit 1
     fi
-    
-    if [ ! -f $HOME/.config/starship.toml ]; then
-      echo "No default starship.toml detected at ~/.config/starship.toml"
-      echo "Putting $STARSHIP_CONFIG as the new default toml"
-      cp $STARSHIP_CONFIG $HOME/.config/starship.toml
-    fi
-    
+    echo "launching bash with STARSHIP_CONFIG=$STARSHIP_CONFIG"
+    sleep 3
     exec bash
     ;;
   *)
