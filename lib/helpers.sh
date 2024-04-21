@@ -21,11 +21,9 @@ function debug {
   fi
 }
 
-
 function info {
     echo -e "\e[32m${1}\e[0m"
 }
-
 
 function boom() { 
   error "${1}"
@@ -36,6 +34,10 @@ function boom() {
 function yak() {
   info "${1}"
   sleep 1 
+}
+
+function current_script_dir() {
+  echo $(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)  
 }
 
 function verify_internet() {
@@ -57,20 +59,55 @@ function verify_internet() {
 
 function apt_update() {
   if verify_internet; then
-    echo "verify internet done"
+    echo "Success: verified internet access"
+  fi
+  local up2date="/tmp/apt-update-success"
+  if [ -f /tmp/apt-update-success ]; then
+    if test $(stat -c %Y -- "$up2date") -gt $(($EPOCHSECONDS - 3600)); then
+      echo "Skipping apt update -- ran within last hour"
+      return 0
+    fi
   fi
   sudo apt update
+  if [ $? -eq 0 ]; then
+    touch $up2date
+  fi
 }
 
 function apt_install() {
-  info "apt_install $1"
+  debug "apt_install $1"
   dpkg -s "$1" > /dev/null 2>&1
-  if [ $? -eq 1 ]; then
+  if [ $? -ne 0 ]; then
     debug "# sudo apt-get install $1"
     sudo apt-get install -yq "$1"
   else
-    info "# packages installed .. skipping : $1"
+    info "# skipping apt install $1 ... already installed"
   fi
+}
+
+function apt_install_list() {
+  pkg_list=$1
+  debug "apt_install_list: $pkg_list"
+  local missing=()
+  local installed=()
+  for I in $pkg_list; do 
+    dpkg -s "$I" > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      missing+=("$I")
+    else
+      echo "Skipping install (already available): $I"
+      installed+=("$I")
+    fi
+  done
+  sleep 0.5
+  case ${#missing[@]} in
+    0) 
+      echo "Success: All packages in list installed already"
+      ;;
+    *)
+      echo "Missing ${#missing[@]} packages: ${missing[@]}"
+      sudo apt install "${missing[@]}"
+  esac
 }
 
 function got_command() {
