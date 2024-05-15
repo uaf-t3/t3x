@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-t3ize_sh="${0%/*}/../lib/t3ize.sh"
-source "$t3ize_sh"
+source $(t3x -T)
 
 # Change Wallpaper
 IMAGE_URL="https://raw.githubusercontent.com/ItalianSquirel/T3-RPi-Image/main/Assets/Wallpapers/t3wallpaper.png"
@@ -13,13 +12,13 @@ fi
 
 WALLPAPER_FILE="$WALLPAPER_DIR/$(basename $IMAGE_URL)"
 
+# Download the image file to the Raspberry Pi
+require_command wget
 info "Downloading T3 Wallpaper"
 if [ ! -d $WALLPAPER_DIR ]; then
   run "mkdir -p $WALLPAPER_DIR"
 fi
 
-# Download the image file to the Raspberry Pi
-require_command wget
 run "wget -q -O ${WALLPAPER_FILE} ${IMAGE_URL}"
 if [ $? -eq 0 ]; then
   yak "T3X wallpaper download success"

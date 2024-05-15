@@ -16,7 +16,7 @@ function warn {
 # export T3X_DEBUG=true # to cause info messages to show up
 function debug {
   if [ "$T3X_DEBUG" != false ]; then
-    echo "# INFO: ${1}"
+    echo "# DEBUG: ${1}"
     sleep 0.1
   fi
 }
@@ -38,12 +38,35 @@ function yak() {
   sleep 1 
 }
 
+function verify_internet() {
+  if $(ping -c 1 google.com > /dev/null); then
+    echo "Internet detected"
+    return 0
+  else
+    echo "Unable to ping google.com -- Are you connected to the internet?"
+    sleep 1
+    if $(ping -c 1 8.8.8.8 > /dev/null); then
+      echo "Unable to ping 8.8.8.8 -- likely no internet!"
+      sleep 1
+      return 1
+    else
+      return 0
+    fi
+  fi
+}
+
+function apt_update() {
+  if verify_internet; then
+    echo "verify internet done"
+  fi
+  sudo apt update
+}
+
 function apt_install() {
   info "apt_install $1"
   dpkg -s "$1" > /dev/null 2>&1
   if [ $? -eq 1 ]; then
-    info "# sudo apt-get install $1"
-    sleep 0.5 
+    debug "# sudo apt-get install $1"
     sudo apt-get install -yq "$1"
   else
     info "# packages installed .. skipping : $1"
@@ -104,6 +127,12 @@ function run() {
   return $RETVAL;
 }
 
+function sudo_run() {
+  echo "SUDO run of: $1"
+  sleep 0.5
+  run "sudo $1"
+}
+
 
 function run_install_unless() {
   got_command $2
@@ -151,4 +180,33 @@ function require_root
 		boom "this script requires root - please run with sudo"
 		exit 1
 	fi
+}
+
+function t3x_scripts_list() {
+  SCRIPTS_DIR=${1:-$T3X_SCRIPTS_DIR}
+  debug "checking dir for *.t3x: $SCRIPTS_DIR"
+  scripts=()
+  for script in $(ls $SCRIPTS_DIR/*.t3x 2> /dev/null | sort -n ); do
+    debug "$script found"
+    script_name=$(basename $script .t3x)
+    scripts+=("$script_name")
+  done
+
+  case ${#scripts[@]} in
+    0) 
+      echo   "No scripts available"
+      ;;
+    1) 
+      echo   "Script available: $scripts"
+      ;;
+    *) 
+      echo 
+      echo   "Scripts list:     # "
+      for script in ${scripts[@]}; do
+        echo "   $script"
+      done
+      #printf "    %s" "${scripts[0]}"    # first element
+      #printf ", %s" "${scripts[@]:1}" # remaining elements prefixed by ,
+      ;;
+  esac
 }

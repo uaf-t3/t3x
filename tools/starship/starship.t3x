@@ -1,0 +1,59 @@
+#!/usr/bin/bash
+
+figlet "STARSHIP!!!" | lolcat
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
+
+case $1 in 
+  setup)
+    sleep 1
+    cd $SCRIPT_DIR
+    echo "cd $(pwd)"
+    echo "launching setup-starship.sh"
+    ./setup-starship.sh
+    if [ $? -eq 0 ]; then
+      sleep 2
+      cat $SCRIPT_DIR/files/starship.ascii | lolcat
+      echo "Re-open your terminal to enjoy"
+      sleep 2
+    else
+      echo "Sadness starship install failed ... please report issue to:"
+      echo "     https://github.com/uaf-t3/t3x/issues "
+    fi
+    ;;
+  launch)
+    if ! command -v starship ; then
+      echo "Error: Starship not installed yet."
+      echo "TODO: Hint: t3x starship install"
+    fi
+    
+    if [ ! -d $HOME/.local/share/fonts ]; then
+      echo "warning: no $HOME/.local/share/fonts."
+      echo "  You may be missing required NerdFonts features"
+      echo "  fix with: t3x nerdfonts install"
+    fi
+    
+    # TODO swap this out for a t3x helper
+    SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" &> /dev/null & pwd )"
+    echo $SCRIPT_DIR
+    
+    DEFAULT_TOMLFILE=files/starship-t3x.toml
+    TOMLFILE=${TOMLFILE:-$DEFAULT_TOMLFILE}
+    export STARSHIP_CONFIG="$SCRIPT_DIR/$TOMLFILE"
+    
+    if [ ! -f $STARSHIP_CONFIG ]; then
+      echo "404 File Not Found: STARSHIP_CONFIG=$STARSHIP_CONFIG"
+      exit 1
+    fi
+    
+    if [ ! -f $HOME/.config/starship.toml ]; then
+      echo "No default starship.toml detected at ~/.config/starship.toml"
+      echo "Putting $STARSHIP_CONFIG as the new default toml"
+      cp $STARSHIP_CONFIG $HOME/.config/starship.toml
+    fi
+    
+    exec bash
+    ;;
+  *)
+    echo "usage: setup | launch"
+    ;;
+esac
