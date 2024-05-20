@@ -3,6 +3,9 @@
 # Define the path to the Node-RED settings file
 SETTINGS_FILE="$HOME/.node-red/settings.js"
 
+#defind the path to the default settings file
+DEFAULT_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib/node-red-default-settings.js"
+
 #apply the default settings file and install node red. This should be locked down by default.
 function install_nodered
 {
@@ -10,7 +13,7 @@ function install_nodered
     curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered --confirm-root --confirm-install --confirm-pi --no-init
 
     echo "restoring node red settings from t3x default..."
-    cp "../lib/node-red-default-settings.js" "$SETTINGS_FILE"
+    cp "$DEFAULT_FILE" "$SETTINGS_FILE"
 
     #echo "locking down node red by binding it to be hosted locally..."
     #lockdown_nodered
