@@ -3,10 +3,10 @@
 # Define the path to the Node-RED settings file
 SETTINGS_FILE="$HOME/.node-red/settings.js"
 echo "calling installation function..."
-install
+install_nodered
 
 #apply the default settings file and install node red. This should be locked down by default.
-function install
+function install_nodered
 {
     echo "restoring node red settings from default.."
     cp "../lib/node-red-default-settings.js" "$SETTINGS_FILE"
@@ -16,7 +16,7 @@ function install
 }
 
 # modify the settings to bind node red to be hosted locally, then restart node red to apply the changes.
-function lockdown
+function lockdown_nodered
 {
     # Backup the original settings file
     cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
