@@ -1,7 +1,9 @@
 #!/bin/bash
 
 #install or update node red
-bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered) --confirm-root --confirm-install --confirm-pi
+#skips confirmations
+#commented out for debugging
+#bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered) --confirm-root --confirm-install --confirm-pi --no-init
 
 # Define the path to the Node-RED settings file
 SETTINGS_FILE="$HOME/.node-red/settings.js"
