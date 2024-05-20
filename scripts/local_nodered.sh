@@ -10,7 +10,7 @@ function install_nodered
     cp "../lib/node-red-default-settings.js" "$SETTINGS_FILE"
 
     echo "running node red installer..."
-    echo bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered) --confirm-root --confirm-install --confirm-pi --no-init
+    bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered) --confirm-root --confirm-install --confirm-pi --no-init
 }
 
 # modify the settings to bind node red to be hosted locally, then restart node red to apply the changes.
