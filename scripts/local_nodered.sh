@@ -6,11 +6,14 @@ SETTINGS_FILE="$HOME/.node-red/settings.js"
 #apply the default settings file and install node red. This should be locked down by default.
 function install_nodered
 {
-    echo "restoring node red settings from default.."
+    echo "restoring node red settings from default..."
     cp "../lib/node-red-default-settings.js" "$SETTINGS_FILE"
 
     echo "running node red installer..."
-    bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered) --confirm-root --confirm-install --confirm-pi --no-init
+    curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered --confirm-root --confirm-install --confirm-pi --no-init
+
+    echo "locking down node red by binding it to be hosted locally..."
+    lockdown_nodered
 }
 
 # modify the settings to bind node red to be hosted locally, then restart node red to apply the changes.
