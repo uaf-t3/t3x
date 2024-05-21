@@ -3,12 +3,53 @@ source $(t3x -T)
 
 TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
 cowsay "Tool time with $TOOL_NAME" | lolcat
-SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)  
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
+# Define the path to the template settings file for Node-RED
+SETTINGS_TEMPLATE="$SCRIPT_DIR/node-red-default-settings.js"
+# Define the path to the Node-RED settings file
+SETTINGS_FILE="$HOME/.node-red/settings.js"
 
 just_exit=false
 args_collected=false
 while_loop_done=false
 declare -a keep_args
+
+function nodered_check_installed
+{
+  if [ command -v node-red &> /dev/null ]; then
+    return 0
+  else
+    echo "node-red feature not found. Try using the setup command to install it."
+    return 1
+  fi
+}
+
+function nodered_restart_if_running
+{
+  if [ ps ax | grep node-red ]; then
+    echo "Outdated Node-RED configuration is still running. Attempting to restart..."
+    node-red-restart
+    echo "Node-RED configuration updated. Please verify that Node-RED is running locally as intended."
+  else
+    echo "Node-RED configuration updated."
+  fi
+}
+
+function install_nodered
+{
+    echo "running node red installer..."
+    bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered) --confirm-root --confirm-install --confirm-pi --no-init
+
+    echo "restoring node red settings from t3x default..."
+    cp "$SETTINGS_TEMPLATE" "$SETTINGS_FILE"
+    # Check if the cp command succeeded
+    if [ $? -ne 0 ]; then
+        echo "Failed to copy from default settings file. This could be due to an unsuccessful or corrupt node-red installation, or because it is open in another program."
+        exit 1
+    else
+        echo "successfully loaded default settings."
+    fi
+}
 
 while [[ $# -gt 0 ]]; do
   if [ "$while_loop_done" == true ]; then
