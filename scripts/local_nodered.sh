@@ -10,10 +10,17 @@ DEFAULT_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../lib/node-red-defa
 function install_nodered
 {
     echo "running node red installer..."
-    curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered --confirm-root --confirm-install --confirm-pi --no-init
+    bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered) --confirm-root --confirm-install --confirm-pi --no-init
 
     echo "restoring node red settings from t3x default..."
     cp "$DEFAULT_FILE" "$SETTINGS_FILE"
+    # Check if the cp command succeeded
+    if [ $? -ne 0 ]; then
+        echo "Failed to copy default settings file. This could be due to an unsuccessful or corrupt node-red installation."
+        exit 1
+    else
+        echo "successfully loaded default settings."
+    fi
 
     #echo "locking down node red by binding it to be hosted locally..."
     #lockdown_nodered
