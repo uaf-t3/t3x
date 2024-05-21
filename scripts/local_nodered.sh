@@ -35,8 +35,13 @@ function lockdown_nodered
     # Check if 'uiHost' is already configured
     if grep -q "uiHost" "$SETTINGS_FILE"; then
         # replace all lines with "uihost" so that they target the loopback interface
-        awk '/uiHost:/ {gsub "uiHost: \'127.0.0.1\\',"); print} 1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
-        echo "Updated 'uiHost' to '127.0.0.1' in the settings file."
+        awk '{gsub(/uiHost:.*/, "uiHost: \"127.0.0.1\"")}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
+        if [ $? -ne 0 ]; then
+            echo "Failed to bind node red to be hosted locally. Avoid running node red without setting a password."
+        exit 1
+        else
+            echo "Updated 'uiHost' to '127.0.0.1' in the settings file."
+        fi
     else
         # 'uiHost' not found; add it to the settings file
         echo "uiHost: '127.0.0.1'," >> "$SETTINGS_FILE"
