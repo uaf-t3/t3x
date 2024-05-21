@@ -22,8 +22,8 @@ function install_nodered
         echo "successfully loaded default settings."
     fi
 
-    #echo "locking down node red by binding it to be hosted locally..."
-    #lockdown_nodered
+    echo "locking down node red by binding it to be hosted locally..."
+    lockdown_nodered
 }
 
 # modify the settings to bind node red to be hosted locally, then restart node red to apply the changes.
