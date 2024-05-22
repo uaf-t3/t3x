@@ -16,7 +16,7 @@ declare -a keep_args
 
 function nodered_check_installed
 {
-  if [ command -v node-red &> /dev/null ]; then
+  if command -v node-red &> /dev/null; then
     return 0
   else
     echo "node-red feature not found. Try using the setup command to install it."
@@ -26,7 +26,7 @@ function nodered_check_installed
 
 function nodered_restart_if_running
 {
-  if [ pgrep -x "node-red" >/dev/null ]; then
+  if pgrep -x "node-red" >/dev/null; then
     echo "Outdated Node-RED configuration is still running. Attempting to restart..."
     node-red-restart
     echo "Node-RED configuration updated. Please verify that Node-RED is running locally as intended."
