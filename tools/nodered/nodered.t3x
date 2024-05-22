@@ -5,7 +5,7 @@ TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
 cowsay "Tool time with $TOOL_NAME" | lolcat
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 # Define the path to the template settings file for Node-RED
-SETTINGS_TEMPLATE="$SCRIPT_DIR/node-red-default-settings.js"
+SETTINGS_TEMPLATE="$SCRIPT_DIR/files/node-red-default-settings.js"
 # Define the path to the Node-RED settings file
 SETTINGS_FILE="$HOME/.node-red/settings.js"
 
