@@ -26,7 +26,7 @@ function nodered_check_installed
 
 function nodered_restart_if_running
 {
-  if [ ps ax | grep node-red ]; then
+  if [ pgrep -x "node-red" >/dev/null ]; then
     echo "Outdated Node-RED configuration is still running. Attempting to restart..."
     node-red-restart
     echo "Node-RED configuration updated. Please verify that Node-RED is running locally as intended."
@@ -44,28 +44,28 @@ function install_nodered
     cp "$SETTINGS_TEMPLATE" "$SETTINGS_FILE"
     # Check if the cp command succeeded
     if [ $? -ne 0 ]; then
-        echo "Failed to copy from default settings file. This could be due to an unsuccessful or corrupt node-red installation, or because it is open in another program."
-        exit 1
+      echo "Failed to copy from default settings file. This could be due to an unsuccessful or corrupt node-red installation, or because it is open in another program."
+      exit 1
     else
-        echo "successfully loaded default settings."
+      echo "successfully loaded default settings."
     fi
 }
 
 # modify the settings to bind node red to be hosted locally, then restart node red to apply the changes.
 function lockdown_nodered
 {
+    nodered_check_installed
     # Backup the original settings file
     cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
-
     # Check if 'uiHost' is already configured
     if grep -q "uiHost:" "$SETTINGS_FILE"; then
         # replace all lines with "uihost:" so that they target the loopback interface
         awk '{if ($0 ~ /uiHost:/) print "\tuiHost: \"127.0.0.1\","; else print}' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
         if [ $? -ne 0 ]; then
-            echo "Failed to bind node red to be hosted locally. Do not run node red unless remote authentication is enabled."
-        exit 1
+          echo "Failed to bind node red to be hosted locally. Do not run node red unless remote authentication is enabled."
+          exit 1
         else
-            echo "Updated 'uiHost' to '127.0.0.1' in the settings file."
+          echo "Updated 'uiHost' to '127.0.0.1' in the settings file."
         fi
     else
         # 'uiHost:' not found; add it to the settings file
@@ -94,10 +94,22 @@ while [[ $# -gt 0 ]]; do
     setup)
       echo "setting up t3 nodered"
       install_nodered
+      if [ $? -ne 0 ]; then
+        echo "Node-RED setup failed. Aborting all operations."
+        exit 1
+      else
+        shift
+      fi
       ;;
     lockdown)
       info "locking down" 
       lockdown_nodered
+      if [ $? -ne 0 ]; then
+        echo "Node-RED lockdown failed. Aborting all operations."
+        exit 1
+      else
+        shift
+      fi
       ;;
     unlock)
       boom "TODO: Not implimented (feel free to hack on this code)"
