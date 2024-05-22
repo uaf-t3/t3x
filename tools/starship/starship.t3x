@@ -33,7 +33,6 @@ case $1 in
     fi
     
     # TODO swap this out for a t3x helper
-    SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" &> /dev/null & pwd )"
     echo $SCRIPT_DIR
     
     DEFAULT_TOMLFILE=files/starship-t3x.toml
