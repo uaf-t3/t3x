@@ -51,6 +51,30 @@ function install_nodered
     fi
 }
 
+# modify the settings to bind node red to be hosted locally, then restart node red to apply the changes.
+function lockdown_nodered
+{
+    # Backup the original settings file
+    cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
+
+    # Check if 'uiHost' is already configured
+    if grep -q "uiHost:" "$SETTINGS_FILE"; then
+        # replace all lines with "uihost:" so that they target the loopback interface
+        awk '{if ($0 ~ /uiHost:/) print "\tuiHost: \"127.0.0.1\","; else print}' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
+        if [ $? -ne 0 ]; then
+            echo "Failed to bind node red to be hosted locally. Do not run node red unless remote authentication is enabled."
+        exit 1
+        else
+            echo "Updated 'uiHost' to '127.0.0.1' in the settings file."
+        fi
+    else
+        # 'uiHost:' not found; add it to the settings file
+        echo "uiHost: '127.0.0.1'," >> "$SETTINGS_FILE"
+        echo "Added 'uiHost' setting to run locally."
+    fi
+    nodered_restart_if_running
+}
+
 while [[ $# -gt 0 ]]; do
   if [ "$while_loop_done" == true ]; then
     break # we hit the --- and just need to move on now
@@ -69,9 +93,11 @@ while [[ $# -gt 0 ]]; do
       ;;
     setup)
       echo "setting up t3 nodered"
+      install_nodered
       ;;
     lockdown)
       info "locking down" 
+      lockdown_nodered
       ;;
     unlock)
       boom "TODO: Not implimented (feel free to hack on this code)"
