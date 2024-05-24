@@ -19,9 +19,9 @@ while [[ $# -gt 0 ]]; do
       shift
       echo "usage: nodered [ARGS] COMMAND [ARGS]"
       echo "  help      # this help"
-      echo "  setup     #  "
-      echo "  lockdown  #  "
-      echo "  unlock    #  "
+      echo "  setup     # install and configure Node-RED and nodes"
+      echo "  lockdown  # configure Node-RED to only be accessible on the local device"
+      echo "  unlock    # configure Node-RED to be accessible by local network devices that log in"
       echo 
       t3x_scripts_list $SCRIPT_DIR
       exit 0
