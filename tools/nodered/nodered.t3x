@@ -37,7 +37,7 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     unlock)
-      boom "TODO: Not implimented (feel free to hack on this code)"
+      info "opening node-RED to the network"
       keep_args+=("$1")
       shift
       ;;

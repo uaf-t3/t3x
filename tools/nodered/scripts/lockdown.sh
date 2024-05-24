@@ -17,7 +17,7 @@ function nodered_restart_if_running
 # Backup the original settings file
 cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
 # Check if 'uiHost' is already configured
-if grep -q "uiHost:" "$SETTINGS_FILE"; then
+if grep -q "^\s*uiHost:" "$SETTINGS_FILE"; then
     # replace all lines with "uihost:" so that they target the loopback interface
     awk '{if ($0 ~ /uiHost:/) print "\tuiHost: \"127.0.0.1\","; else print}' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
     if [ $? -ne 0 ]; then
@@ -28,7 +28,7 @@ if grep -q "uiHost:" "$SETTINGS_FILE"; then
     fi
 else
     # 'uiHost:' not found; add it to the settings file
-    echo "uiHost: '127.0.0.1'," >> "$SETTINGS_FILE"
+    echo "\tuiHost: '127.0.0.1'," >> "$SETTINGS_FILE"
     echo "Added 'uiHost' setting to run locally."
 fi
 nodered_restart_if_running
