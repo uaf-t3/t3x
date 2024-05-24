@@ -35,7 +35,7 @@ else
 fi
 
 #comment all uiHosts
-awk '/^[[:space:]]*uiHost:/ {gsub(/.*/, "\t//uiHost:")}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
+awk '/^[[:space:]]*uiHost:/ {gsub(/^[[:space:]]*uiHost:/, "\t//uiHost:")}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
 cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
 
 nodered_restart_if_running
