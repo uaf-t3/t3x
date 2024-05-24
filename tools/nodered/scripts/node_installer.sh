@@ -24,7 +24,7 @@ fi
 while IFS= read -r node
 do
     echo -e "Attempting to install npm package: ${GREEN}$node${NC}"
-    if ! npm install -g "$node"; then
+    if ! npm install -g --unsafe-perm "$node"; then
         echo -e "${RED}Error: Failed to install npm package: $node${NC}" >&2
         echo "Continuing to next package..."
     else
