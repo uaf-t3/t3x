@@ -16,23 +16,22 @@ function nodered_restart_if_running
 
 # Backup the original settings file
 cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
-# Check if 'uiHost' is already configured
-if grep -q "^\s*uiHost:" "$SETTINGS_FILE"; then
-    # replace all lines with "uihost:" so that they target the loopback interface
-    awk '{if ($0 ~ /uiHost:/) print "\tuiHost: \"127.0.0.1\","; else print}' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
-    if [ $? -ne 0 ]; then
-        echo "Failed to bind node red to be hosted locally. Do not run node red unless remote authentication is enabled."
-        exit 1
-    else
-        echo "Updated 'uiHost' to '127.0.0.1' in the settings file."
-    fi
-else
-    # 'uiHost:' not found; add it to the settings file
-    echo -e "\tuiHost: '127.0.0.1'," >> "$SETTINGS_FILE"
-    echo "Added 'uiHost' setting to run locally."
-fi
 
-#backup this edit
+# comment all uiHosts
+awk '/^[[:space:]]*uiHost:/ {gsub(/^[[:space:]]*uiHost:/, "\t//uiHost:")}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
+#update backup
+cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
+
+#uncomment loopback uiHost if it exists
+if awk '/^[[:space:]]*\/\/uiHost: "127.0.0.1",/ {gsub(/\/\/uiHost: "127.0.0.1",/, "uiHost: \"127.0.0.1\"," )}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"; then
+  cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
+  echo "Enabled 'uiHost' setting to run locally."
+else
+  # '//uiHost: "127.0.0.1",' not found. Append it to settings file.
+  echo -e "\tuiHost: '127.0.0.1'," >> "$SETTINGS_FILE"
+  echo "Added 'uiHost' setting to run locally."
+fi
+#update backup
 cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
 
 # comment the password auth section
