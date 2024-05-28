@@ -13,7 +13,7 @@ case $1 in
     if [ $? -eq 0 ]; then
       sleep 2
       cat $SCRIPT_DIR/files/starship.ascii | lolcat
-      echo "Re-open your terminal to enjoy"
+      echo "close and re-open all terminal windows to enjoy your new starship prompt!"
       sleep 2
     else
       echo "Sadness starship install failed ... please report issue to:"
