@@ -16,6 +16,7 @@ t3x starship setup
 
 - Installs starship systemwide (will prompt for sudo)
 - Installs the T3X starship toml custom config in current user `~/.config/starship.toml`
+- Installs and sets UTF-8 locales so that fonts can be displayed properly
 - Installs a [Nerd Font](https://www.nerdfonts.com/) for current user in `~/.local/share/fonts/`.  This is required for the advanced prompt icons.
 - Configures LxTerminal to use that nerdfont (default terminal)
 - [ ] TODO: Install and configure cool-retro-terminal
