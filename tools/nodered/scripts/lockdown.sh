@@ -35,8 +35,8 @@ fi
 cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
 
 # comment the password auth section
-    awk '/\/\/t3x_tag_pwAuth_begin/ {gsub(/.*/, "\t/\*t3x_tag_pwAuth_begin")}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE" 2>/dev/null
+    awk '/\/\/t3x_tag_pwAuth_begin/ {gsub(/.*/, "\t/*t3x_tag_pwAuth_begin")}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE" 2>/dev/null
     cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
-    awk '/\/\/t3x_tag_pwAuth_end/ {gsub(/.*/, "\tt3x_tag_pwAuth_end\*/")}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE" 2>/dev/null
+    awk '/\/\/t3x_tag_pwAuth_end/ {gsub(/.*/, "\tt3x_tag_pwAuth_end*/")}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE" 2>/dev/null
     cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
 nodered_restart_if_running
