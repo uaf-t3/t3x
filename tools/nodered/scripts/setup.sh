@@ -15,7 +15,6 @@ if curl -sL "$INSTALLER_URL" -o "$CACHED_INSTALLER"; then
     echo "Installer downloaded successfully."
 else
     echo "Failed to download the installer. Attempting to run cached version..."
-    exit 1
 fi
 if [ -f "$CACHED_INSTALLER" ]; then
     echo "running installer..."
