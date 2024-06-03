@@ -15,27 +15,32 @@ function nodered_restart_if_running
   fi
 }
 
-# Backup the original settings file
-cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
+# tmp 1 = source, tmp 2 = destination
+cp "$SETTINGS_FILE" "$SETTINGS_FILE.tmp1"
+cp "$SETTINGS_FILE" "$SETTINGS_FILE.tmp2"
+
 #check uihost not configured
-if ! grep -q "^\s*uiHost:" "$SETTINGS_FILE"; then
+if ! grep -q "^\s*uiHost:" "$SETTINGS_FILE.tmp1"; then
     info "uiHost not configured. Node-RED may already be unlocked."
 fi
 
 # Check if authentication is not enabled by t3x
-if grep -q "/\*t3x_tag_pwAuth_begin" "$SETTINGS_FILE" && grep -q "t3x_tag_pwAuth_end\*/" "$SETTINGS_FILE"; then
+if grep -q "/\*t3x_tag_pwAuth_begin" "$SETTINGS_FILE.tmp1" && grep -q "t3x_tag_pwAuth_end\*/" "$SETTINGS_FILE.tmp1"; then
     # uncomment the password auth section
-    awk '/\/\*t3x_tag_pwAuth_begin/ {gsub(/.*/, "\t//t3x_tag_pwAuth_begin")}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
-    cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
-    awk '/t3x_tag_pwAuth_end\*\// {gsub(/.*/, "\t//t3x_tag_pwAuth_end")}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
-    cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
+    awk '/\/\*t3x_tag_pwAuth_begin/ {gsub(/.*/, "\t//t3x_tag_pwAuth_begin")}1' "$SETTINGS_FILE.tmp1" > "$SETTINGS_FILE.tmp2"
+    cp "$SETTINGS_FILE.tmp2" "$SETTINGS_FILE.tmp1" #update source
+    awk '/t3x_tag_pwAuth_end\*\// {gsub(/.*/, "\t//t3x_tag_pwAuth_end")}1' "$SETTINGS_FILE.tmp1" > "$SETTINGS_FILE.tmp2"
+    cp "$SETTINGS_FILE.tmp2" "$SETTINGS_FILE.tmp1" #update source
 else
     # preconfigured settings are not present
     boom "unable to enable password authentication. Aborting unlock..."
 fi
 
 #comment all uiHosts
-awk '/^[[:space:]]*uiHost:/ {gsub(/^[[:space:]]*uiHost:/, "\t//uiHost:")}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"
-cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
+awk '/^[[:space:]]*uiHost:/ {gsub(/^[[:space:]]*uiHost:/, "\t//uiHost:")}1' "$SETTINGS_FILE.tmp1" > "$SETTINGS_FILE.tmp2"
+cp "$SETTINGS_FILE.tmp2" "$SETTINGS_FILE.tmp1" #update source
 
+cp "$SETTINGS_FILE" "$SETTINGS_FILE.old" #backup copy
+cp "$SETTINGS_FILE.tmp2" "$SETTINGS_FILE" #apply destination to primary config
+rm $SETTINGS_FILE.tmp1 $SETTINGS_FILE.tmp2 #cleanup
 nodered_restart_if_running

@@ -6,11 +6,11 @@ SETTINGS_FILE="$HOME/.node-red/settings.js"
 function nodered_restart_if_running
 {
   if pgrep -x "node-red" >/dev/null; then
-    echo "Outdated Node-RED configuration is still running. Attempting to restart..."
+    echo "Outdated Node-RED is still running. Attempting to restart..."
     node-red-restart
     echo "Node-RED configuration updated. Please verify that Node-RED is running locally as intended."
   else
-    echo "Node-RED configuration updated."
+    echo "Node-RED configuration updated. It will be applied when Node-RED is started."
   fi
 }
 
@@ -18,17 +18,21 @@ function nodered_restart_if_running
 echo "Please enter a password for Node-RED:"
 hashed_password=$(node-red admin hash-pw)
 
-# Backup the original settings file
-cp "$SETTINGS_FILE" "$SETTINGS_FILE.bak"
+# tmp 1 = source, tmp 2 = destination
+cp "$SETTINGS_FILE" "$SETTINGS_FILE.tmp1"
+cp "$SETTINGS_FILE" "$SETTINGS_FILE.tmp2"
 
 # replace password hash
 if awk -v hashed_password="$hashed_password" 'BEGIN{sub(/^Password: /, "", hashed_password)} /"password":/ {
     $0 = "\t\t    \"password\": \"" hashed_password "\","
-}1' "$SETTINGS_FILE.bak" > "$SETTINGS_FILE"; then
+}1' "$SETTINGS_FILE.tmp1" > "$SETTINGS_FILE.tmp2"; then
+    
     echo "password updated successfully."
+    cp "$SETTINGS_FILE" "$SETTINGS_FILE.old" #backup copy
+    cp "$SETTINGS_FILE.tmp2" "$SETTINGS_FILE" #apply destination to primary config
+    nodered_restart_if_running
 else
-    echo "password change was unsuccessful. Restoring old configuration..."
-    cp "$SETTINGS_FILE.bak" "$SETTINGS_FILE"
+    echo "password change was unsuccessful. No changes were applied."
 fi
 
-nodered_restart_if_running
+rm $SETTINGS_FILE.tmp1 $SETTINGS_FILE.tmp2 #cleanup
