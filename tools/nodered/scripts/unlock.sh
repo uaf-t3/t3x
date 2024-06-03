@@ -3,15 +3,16 @@ source $(t3x -T)
 
 # Define the path to the Node-RED settings file
 SETTINGS_FILE="$HOME/.node-red/settings.js"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 
 function nodered_restart_if_running
 {
   if pgrep -x "node-red" >/dev/null; then
-    echo "Outdated Node-RED configuration is still running. Attempting to restart..."
+    echo "Outdated Node-RED is still running. Attempting to restart..."
     node-red-restart
     echo "Node-RED configuration updated. Please verify that Node-RED is running locally as intended."
   else
-    echo "Node-RED configuration updated."
+    echo "Node-RED configuration updated. It will be applied when Node-RED is started."
   fi
 }
 
@@ -43,4 +44,4 @@ cp "$SETTINGS_FILE.tmp2" "$SETTINGS_FILE.tmp1" #update source
 cp "$SETTINGS_FILE" "$SETTINGS_FILE.old" #backup copy
 cp "$SETTINGS_FILE.tmp2" "$SETTINGS_FILE" #apply destination to primary config
 rm $SETTINGS_FILE.tmp1 $SETTINGS_FILE.tmp2 #cleanup
-nodered_restart_if_running
+bash "${SCRIPT_DIR}/nodered_restart_if_running.sh"

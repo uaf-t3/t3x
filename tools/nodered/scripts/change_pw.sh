@@ -2,6 +2,7 @@
 
 # Define the path to the Node-RED settings file
 SETTINGS_FILE="$HOME/.node-red/settings.js"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 
 function nodered_restart_if_running
 {
@@ -30,7 +31,7 @@ if awk -v hashed_password="$hashed_password" 'BEGIN{sub(/^Password: /, "", hashe
     echo "password updated successfully."
     cp "$SETTINGS_FILE" "$SETTINGS_FILE.old" #backup copy
     cp "$SETTINGS_FILE.tmp2" "$SETTINGS_FILE" #apply destination to primary config
-    nodered_restart_if_running
+    bash "${SCRIPT_DIR}/nodered_restart_if_running.sh"
 else
     echo "password change was unsuccessful. No changes were applied."
 fi

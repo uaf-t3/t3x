@@ -2,6 +2,7 @@
 
 # Define the path to the Node-RED settings file
 SETTINGS_FILE="$HOME/.node-red/settings.js"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 
 function nodered_restart_if_running
 {
@@ -44,4 +45,4 @@ fi
 cp "$SETTINGS_FILE" "$SETTINGS_FILE.old" #backup copy
 cp "$SETTINGS_FILE.tmp2" "$SETTINGS_FILE" #apply destination to primary config
 rm $SETTINGS_FILE.tmp1 $SETTINGS_FILE.tmp2 #cleanup
-nodered_restart_if_running
+bash "${SCRIPT_DIR}/nodered_restart_if_running.sh"
