@@ -21,7 +21,7 @@ if [ -f "$CACHED_INSTALLER" ]; then
     echo "running installer..."
     bash "$CACHED_INSTALLER" --confirm-root --confirm-install --confirm-pi --no-init
 else
-    echo "Cached Node-RED installer not found. Are you connected to the internet?."
+    echo "Cached Node-RED installer not found. Try connecting to the internet and running it again."
     exit 1
 fi
 
