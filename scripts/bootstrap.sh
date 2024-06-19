@@ -140,3 +140,4 @@ cd $HOME/t3x/
 #############################################################
 
 echo "T3X bootstrap completed ... happy hacking!!" | pv -qL 7 | lolcat
+echo "please restart your terminal or type 'source ~/.bashrc' to make the t3x command available."
