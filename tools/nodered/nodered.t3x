@@ -3,7 +3,7 @@ source $(t3x -T)
 
 TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
 cowsay "Tool time with $TOOL_NAME" | lolcat
-SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)  
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 
 just_exit=false
 args_collected=false
@@ -18,22 +18,29 @@ while [[ $# -gt 0 ]]; do
     help)
       shift
       echo "usage: nodered [ARGS] COMMAND [ARGS]"
-      echo "  help      # this help"
-      echo "  setup     #  "
-      echo "  lockdown  #  "
-      echo "  unlock    #  "
+      echo "  help            # this help"
+      echo "  setup           # install and configure Node-RED and nodes"
+      echo "  lockdown        # configure Node-RED to only be accessible on the local device"
+      echo "  unlock          # configure Node-RED to be accessible by local network devices that log in"
+      echo "  change_pw       # change the login password used to log in from other devices"
       echo 
       t3x_scripts_list $SCRIPT_DIR
       exit 0
       ;;
     setup)
       echo "setting up t3 nodered"
+      keep_args+=("$1")
+      shift
       ;;
     lockdown)
-      info "locking down" 
+      info "locking down"
+      keep_args+=("$1")
+      shift
       ;;
     unlock)
-      boom "TODO: Not implimented (feel free to hack on this code)"
+      info "opening node-RED to the network"
+      keep_args+=("$1")
+      shift
       ;;
     ---)
       keep_args=(${keep_args[@]} "$@")
@@ -52,6 +59,17 @@ set -- ${keep_args[@]}
 command=$1
 debug "command=$command"
 shift
+
+#if not installed or using setup, tell user they need to use setup
+if ! ( command -v node-red || [ $command = "setup" ] ); then
+  echo "t3x could not detect a node-red installation to modify."
+  echo "You may need to use 't3x nodered setup' to install it first."
+  echo "Would you still like to run the $command?"
+  if(! agree); then
+    echo "aborting $command."
+    exit 0
+  fi
+fi
 
 script="$SCRIPT_DIR/scripts/$command.sh"
 debug "checking for script=$script"

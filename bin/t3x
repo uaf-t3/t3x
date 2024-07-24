@@ -43,24 +43,24 @@ args_collected=false
 while_loop_done=false
 declare -a keep_args
 
+if [[ $# -gt 0 && "$1" =~ ^(-h|--help|help)$ ]]; then
+  echo "usage: t3x [ARGS] COMMAND [ARGS]"
+  echo "   -h|--help      # this help"
+  echo "   -V|--version   # current T3X_VERSION"
+  echo "   -T|--t3sh      # realpath of t3ize.sh"
+  echo "   -d|--debug     # enable debug messages"
+  echo "   -D|--dryrun    # will not run commands : warning limited to t3ized runs"
+  echo "   -E|--env       # get the T3X env details"
+  t3x_scripts_list
+  t3x_tools_list
+  exit 0
+fi
+
 while [[ $# -gt 0 ]]; do
   if [ "$while_loop_done" == true ]; then
     break # we hit the --- and just need to move on now
   fi
   case "$1" in
-    -h|--help|help)
-      shift
-      echo "usage: t3x [ARGS] COMMAND [ARGS]"
-      echo "   -h|--help      # this help"
-      echo "   -V|--version   # current T3X_VERSION"
-      echo "   -T|--t3sh      # realpath of t3ize.sh"
-      echo "   -d|--debug     # enable debug messages"
-      echo "   -D|--dryrun    # will not run commands : warning limited to t3ized runs"
-      echo "   -E|--env       # get the T3X env details"
-      t3x_scripts_list
-      t3x_tools_list
-      exit 0
-      ;;
     -V|--version)
       shift
       echo "t3ize version $T3X_VERSION"

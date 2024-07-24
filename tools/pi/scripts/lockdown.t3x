@@ -8,6 +8,8 @@ full-lockdown() {
   t3x pi ssh-disable    || failed+=("ssh-disable")
   echo "Locking down VNC"
   t3x pi vnc-disable    || failed+=("vnc-disable")
+  echo "Locking down Node-RED"
+  t3x nodered lockdown    || failed+=("nodered-lockdown")
   echo "Enabling firewall"
   t3x pi enable-ufw     || failed+=("enable ufw")
   echo "Verifying default 'raspberry' password not in use"

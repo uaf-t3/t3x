@@ -20,6 +20,10 @@ if [ ! -f "$NODE_LIST" ]; then
     exit 1
 fi
 
+# Temporarily change permissions of node_modules directory so that installers can write to it
+sudo mkdir /usr/lib/node_modules
+sudo chmod a+w /usr/lib/node_modules
+
 # Loop through the nodes.txt file
 while IFS= read -r node
 do
@@ -31,3 +35,6 @@ do
         echo -e "${GREEN}Successfully installed npm package: $node${NC}"
     fi
 done < "$NODE_LIST"
+
+# Revert permissions of node_modules directory
+sudo chmod a-w /usr/lib/node_modules

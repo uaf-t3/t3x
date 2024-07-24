@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+source $(t3x -T)
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 cd $SCRIPT_DIR
 
@@ -61,3 +62,6 @@ else
   echo "Error: setup-nerdfont.sh failed ... you may not have needed fonts for full experience"
   exit 1
 fi
+
+echo "updating locale to UTF-8 for nerdfont compatibility"
+t3x pi fix-locale
