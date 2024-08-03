@@ -13,10 +13,10 @@ status_AP() {
 		wifi_status=$(nmcli -t -f GENERAL.STATE device show "$interface" | awk -F: '{print $2}')
 		echo "$wifi_status"
 
-		if echo "$wifi_status" | grep -q "connected" ; then
-			echo "Raspberry AP is : CONNECTED" 
+		if echo "$wifi_status" | grep -q "disconnected" ; then
+			echo "Raspberry AP is : DISCONNECTED" 
 		else
-			echo "Raspberry AP is : DISCONNECTED"
+			echo "Raspberry AP is : CONNECTED"
 		fi
 	else
 		echo "Connection $interface does not exist"
