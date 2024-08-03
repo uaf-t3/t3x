@@ -1,7 +1,13 @@
 !/usr/bin/bash
 #source $(t3x -T)
 
-status_Router() {}
+status_Router() {
+	if sudo nft list ruleset | grep -q "drop"; then
+		echo "Router is currently: DISABLED"
+	else
+		echo "Router is currently: ENABLED"
+	fi
+}
 
 status_AP() {
 	interface = "wlan0" #this may change though....
@@ -37,8 +43,6 @@ case "$1" in
 esac
 
 #TODO
-# - fill the functions
-# - compare on and off for each function
 # - print usage?
 # - test on new pi
 # - test t3x compatability..
