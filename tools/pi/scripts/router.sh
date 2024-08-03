@@ -4,10 +4,18 @@
 #think this may be needed..
 router_ip = "10.20.24.1"
 
+disable_route() {
+	echo "disabling traffic to Router: $router_ip"
+	sudo nft add table inet filter
+	sudo nft add rule inet filter output drop 
+	echo "traffic to router is: DISABLED"
+}
 
-disable_route() {}
-
-enable_route() {}
+enable_route() {
+	echo "Enabling traffic to router: $router_ip"
+	sudo nft flush table inet filter
+	echo "Traffic to router is now: ENABLED"
+}
 
 case "$1" in
 	enable)
@@ -23,4 +31,4 @@ esac
 
 #TODO
 # - adjust nft tables for enable/disable router..?
-# - check for table changes
+# - check for table changes?
