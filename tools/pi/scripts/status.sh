@@ -3,7 +3,25 @@
 
 status_Router() {}
 
-status_AP() {}
+status_AP() {
+	interface = "wlan0" #this may change though....
+	AP="RaspAP"
+	
+	echo "Status: "
+	if nmcli device show "$interface" &> /dev/null; then
+		
+		wifi_status=$(nmcli -t -f GENERAL.STATE device show "$interface" | awk -F: '{print $2}')
+		echo "$wifi_status"
+
+		if echo "$wifi_status" | grep -q "connected" ; then
+			echo "Raspberry AP is : CONNECTED" 
+		else
+			echo "Raspberry AP is : DISCONNECTED"
+		fi
+	else
+		echo "Connection $interface does not exist"
+	fi
+}
 
 #main
 case "$1" in 
