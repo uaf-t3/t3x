@@ -1,11 +1,15 @@
 #!/usr/bin/bash
 source $(t3x -T)
 
+require_command "lolcat"
+
 status_Router() {
 	if sudo nft list ruleset | grep -q "drop"; then
-		echo "Router is currently: DISABLED"
+		echo "Router is currently:"
+		echo " DISABLED" | lolcat
 	else
-		echo "Router is currently: ENABLED"
+		echo "Router is currently:"
+		echo " ENABLED" | lolcat
 	fi
 }
 
@@ -20,9 +24,11 @@ status_AP() {
 		echo "$wifi_status"
 
 		if echo "$wifi_status" | grep -q "disconnected" ; then
-			echo "Raspberry AP is : DISCONNECTED" 
+			echo "Raspberry AP is :"
+			echo " DISCONNECTED" | lolcat 
 		else
-			echo "Raspberry AP is : CONNECTED"
+			echo "Raspberry AP is :"
+			echo " CONNECTED" | lolcat
 		fi
 	else
 		echo "Connection $interface does not exist"
