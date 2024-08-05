@@ -1,5 +1,5 @@
-!/usr/bin/bash
-# source $(t3x -T)
+#!/usr/bin/bash
+source $(t3x -T)
 
 #think this may be needed..
 router_ip = "10.20.24.1"
@@ -17,6 +17,7 @@ enable_route() {
 	echo "Traffic to router is now: ENABLED"
 }
 
+
 case "$1" in
 	enable)
 		enable_route
@@ -30,5 +31,4 @@ case "$1" in
 esac
 
 #TODO
-# - adjust nft tables for enable/disable router..?
 # - check for table changes?

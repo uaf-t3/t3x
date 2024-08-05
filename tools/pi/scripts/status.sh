@@ -1,5 +1,5 @@
-!/usr/bin/bash
-#source $(t3x -T)
+#!/usr/bin/bash
+source $(t3x -T)
 
 status_Router() {
 	if sudo nft list ruleset | grep -q "drop"; then
@@ -43,6 +43,5 @@ case "$1" in
 esac
 
 #TODO
-# - print usage?
-# - test on new pi
-# - test t3x compatability..
+# - build a help section?
+# - additional QC?
