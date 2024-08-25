@@ -107,3 +107,8 @@ See the [LICENSE.md](LICENSE.MD) file for full license.
 - [@dayne](https://github.com/dayne) - T3X Innovation Architect
 - [@ItalianSquirel](https://github.com/ItalianSquirel) - T3X Code Conjurer
 - [@SushiFanta](https://github.com/SushiFanta) - T3X Algorithm Alchemist
+
+## Contributing
+
+We welcome new ideas for t3x.  If you are new to git and GitHub we you might consider installing [gitflow-toolkit](https://github.com/mritd/gitflow-toolkit).
+
