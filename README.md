@@ -96,7 +96,7 @@ must be eligible to be included under this license or as needed; any specific fi
 | :green_circle: Patent use     | :scroll: | |
 | :green_circle: Private use    | :mute:   | |
 
-See the [LICENSE.md](LICENSE.MD) file for full license. 
+See the [LICENSE.md](LICENSE.md) file for full license. 
 
 ## Credits & Sponsors
 
