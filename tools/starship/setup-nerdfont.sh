@@ -24,14 +24,13 @@ if ! command -v wget > /dev/null 2>&1 ; then
   exit 1
 fi
 
-
 cd $ZIPCACHE
 if [ -f "$ZIPFILE" ]; then
   echo "Skipping download (file exists): $ZIPFILE"
 else
   echo "Starting download $FONTZIP_URL"
   wget --quiet "$FONTZIP_URL" 
-  if [ $? -eq 0 ]; then
+  if [ $? -ne 0 ]; then
     echo "Fatal: Download of font failed: wget $FONTZIP_URL"
     exit 1
   fi
