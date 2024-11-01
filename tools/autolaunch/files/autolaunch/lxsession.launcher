@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+#
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
+LAUNCHER_DIR="${SCRIPT_DIR}/lxsession/"
+
+if [ -d "$LAUNCHER_DIR" ]; then
+    sh_files=("$LAUNCHER_DIR"/*.sh)
+    if [ -e "${sh_files[0]}" ]; then
+        # Loop through and run each .sh file
+        for script in "$LAUNCHER_DIR"/*.sh; do
+            echo "Running $script"
+            bash "$script"
+        done
+    else
+        echo "No .sh files found in $LAUNCHER_DIR"
+    fi
+else
+    echo "Directory $LAUNCHER_DIR does not exist"
+fi
