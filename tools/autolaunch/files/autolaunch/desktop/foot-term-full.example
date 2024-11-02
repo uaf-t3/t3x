@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+# Example launcher to cause foot to launch in full screen
+#
+
+if ! command -v foot > /dev/null; then
+	echo "missing foot terminal ..."
+	echo "fix: sudo apt install foot"
+	exit 1
+fi
+
+foot --fullscreen

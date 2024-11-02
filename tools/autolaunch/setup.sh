@@ -9,26 +9,21 @@
 #
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 
-LXSESSION_DIR=$HOME/.config/lxsession/LXDE-pi
-LXSESSION_FILE_SOURCE="${SCRIPT_DIR}/files/lxsession.config"
-LXSESSION_FILE_TARGET="${HOME}/.config/lxsession/LXDE-pi/autostart"
+AUTOSTART_DIR=$HOME/.config/autostart/
 
 AUTODIR_DIR="${HOME}/Documents"
 AUTODIR_SOURCE="${SCRIPT_DIR}/files/autolaunch"
 AUTODIR_TARGET="${AUTODIR_DIR}/"
 
-if [ ! -d "$LXSESSION_DIR" ]; then
-	echo "Creating config folder: $LXSESSION_DIR"
-	mkdir -p $LXSESSION_DIR
-else
-	echo "Skipping config folder: $LXSESSION_DIR exists"
+
+if [ ! -d "$AUTOSTART_DIR" ]; then
+	echo "Creating $AUTOSTART_DIR"
+	mkdir -p "$AUTOSTART_DIR"
 fi
 
-if [ -f "$LXSESSION_FILE_TARGET" ]; then
-	echo "Skipping create LXDE autostart .. file exists: $LXSESSION_FILE_TARGET"
-else
-	echo "Copying in the new LXDE autostart: $LXESSION_FILE_TARGET"
-	cp -v "$LXSESSION_FILE_SOURCE" "$LXSESSION_FILE_TARGET"
+if [ ! -f "${AUTOSTART_DIR}/autostart.desktop" ]; then
+	echo "Installing autostart.desktop in $AUTOSTART_DIR"
+	cp $SCRIPT_DIR/files/autostart.desktop $AUTOSTART_DIR
 fi
 
 if [ ! -d "$AUTODIR_DIR" ]; then
