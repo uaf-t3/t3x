@@ -15,7 +15,6 @@ AUTODIR_DIR="${HOME}/Documents"
 AUTODIR_SOURCE="${SCRIPT_DIR}/files/autolaunch"
 AUTODIR_TARGET="${AUTODIR_DIR}/"
 
-
 if [ ! -d "$AUTOSTART_DIR" ]; then
 	echo "Creating $AUTOSTART_DIR"
 	mkdir -p "$AUTOSTART_DIR"
@@ -33,3 +32,13 @@ fi
 
 echo "Copying over autolaunch (no clobber) into $HOME/Documents"
 cp -rvn "$AUTODIR_SOURCE" "$AUTODIR_TARGET"
+
+### the above should work fine on latest raspberry pi OS
+### the below is for legacy systems on X11
+
+if pgrep labwc > /dev/null; then 
+  echo "Detected labwc running .. skipping autolaunch.lxsession setup"
+else
+  echo "labwc not detected .. assuming legacy setup is needed for lxsession"
+  $SCRIPT_DIR/files/autolaunch.lxsession
+fi

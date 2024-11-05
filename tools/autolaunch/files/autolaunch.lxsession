@@ -1,0 +1,35 @@
+#!/usr/bin/bash
+
+LXSESSION_DIR=$HOME/.config/lxsession/LXDE-pi
+LXSESSION_CONFIG_LINE="$HOME/Desktop/autolaunch/desktop.launcher"
+LXSESSION_FILE_TARGET="${HOME}/.config/lxsession/LXDE-pi/autostart"
+
+if [ ! -d "$LXSESSION_DIR" ]; then
+	echo "Creating config folder: $LXSESSION_DIR"
+	mkdir -p $LXSESSION_DIR
+else
+	echo "Skipping config folder: $LXSESSION_DIR exists"
+fi
+
+if [ -f "$LXSESSION_FILE_TARGET" ]; then
+	echo "Skipping create LXDE autostart .. file exists: $LXSESSION_FILE_TARGET"
+  grep "$XLSESSION_CONFIG_LINE" "$LXSESSION_TARGET_FILE" > /dev/null;
+  if [ $? -eq 0 ]; then
+    echo "Success: detected the configuration line in lxsession autostart"
+  else
+    echo "Failure: Unable to detect configuration line needed in lxsession file"
+    echo "Manually add the following line"
+    echo "$LXSESSION_CONFIG_LINE"
+    echo "to: $LXSESSION_TARGET_FILE"
+  fi
+else
+	echo "Copying in the new LXDE autostart: $LXESSION_FILE_TARGET"
+	cp -v "$LXSESSION_FILE_SOURCE" "$LXSESSION_FILE_TARGET"
+  # dance below because xscreen saver line (if it exists) needs 
+  # to be at the end of the file
+  CONF_WOX=$(cat $LXSESSION_FILE_TARGET | grep -v xscreensaver)
+  CONF_XON=$(cat $LXSESSION_FILE_TARGET | grep xscreensaver)
+  echo $CONF_WOX > $LXSESSION_TARGET_FILE
+  echo $LXSESSION_CONFIG_LINE >> $LXSESSION_TARGET_FILE
+  echo $CONF_XON >> $LXSESSION_TARGET_FILE
+fi
