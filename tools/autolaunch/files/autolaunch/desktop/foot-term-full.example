@@ -1,6 +1,8 @@
 #!/usr/bin/bash
 # Example launcher to cause foot to launch in full screen
 #
+# Foot is nice alternative to lxterminal because it supports
+# a --fullscreen option
 
 if ! command -v foot > /dev/null; then
 	echo "missing foot terminal ..."

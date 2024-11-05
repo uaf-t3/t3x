@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+#
+# lxterminal-htop.sh.example
+# 
+# Example of causing lxterminal to launch with an htop running.
+# To enable rename file to lxterminal-htop.sh (or anything.sh)
+
+
+lxterminal -e htop
