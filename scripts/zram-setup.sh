@@ -38,12 +38,17 @@ fi
 if grep "$BIN_FILE" /etc/rc.local > /dev/null; then
   echo "Skipping zram setup in rc.local -- already configured"
 else
-  sudo sh -c "echo '$BIN_FILE &' >> /etc/rc.local"
+  #sudo sh -c "echo '$BIN_FILE &' >> /etc/rc.local"
+  sudo sed -i '/exit 0/i $BIN_FILE &' /etc/rc.local
   if [ $? -eq 0 ] ; then
     echo "Success: rc.local will call $BIN_FILE now"
     echo "Reboot is needed now"
   else
     echo "Failed to setup $BIN_FILE in /etc/rc.local"
+    echo "Fix it by manually doing the following steps"
+    echo "1) Add the following line to /etc/rc.local"
+    echo "   Warning: It needs to come before 'exit 0' (last line)"
+    echo "$BIN_FILE &"
+    echo "2) reboot and see if it worked"
   fi
 fi
-
