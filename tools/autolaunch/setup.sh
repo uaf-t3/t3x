@@ -20,9 +20,9 @@ if [ ! -d "$AUTOSTART_DIR" ]; then
 	mkdir -p "$AUTOSTART_DIR"
 fi
 
-if [ ! -f "${AUTOSTART_DIR}/autostart.desktop" ]; then
-	echo "Installing autostart.desktop in $AUTOSTART_DIR"
-	cp $SCRIPT_DIR/files/autostart.desktop $AUTOSTART_DIR
+if [ ! -f "${AUTOSTART_DIR}/autolaunch.desktop" ]; then
+	echo "Installing autolaunch.desktop in $AUTOSTART_DIR"
+	cp $SCRIPT_DIR/files/autolaunch.desktop $AUTOSTART_DIR
 fi
 
 if [ ! -d "$AUTODIR_DIR" ]; then
