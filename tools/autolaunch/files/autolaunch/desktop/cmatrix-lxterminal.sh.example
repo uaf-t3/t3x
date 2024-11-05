@@ -8,12 +8,14 @@ if ! command -v cmatrix > /dev/null; then
   exit 1
 fi
 
-lxterminal -e cmatrix
-
-if command -v wmctrl > /dev/null; then
-  sleep 0.5
-  wmctrl -r :ACTIVE: -b toggle,fullscreen
-else
+if ! command -v wmctrl > /dev/null; then
   echo "missing wmctrl .. unable to do fullscreen mode"
   echo "fix: sudo apt install wmctrl"
 fi
+
+echo "launching lxterminal"
+
+lxterminal -e cmatrix &
+# sleeping a sec then attempting a fullscreen
+sleep 3
+wmctrl -r :ACTIVE: -b toggle,fullscreen

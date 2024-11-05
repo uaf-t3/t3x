@@ -4,6 +4,9 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 LAUNCHER_DIR="${SCRIPT_DIR}/desktop/"
 LOGDIR=/tmp/.autostart.log/desktop/
 
+# want to test w/o rebooting?
+# try: sudo systemctl restart lightdm 
+
 if [ ! -d $LOGDIR ]; then
 	mkdir -p $LOGDIR
 fi
