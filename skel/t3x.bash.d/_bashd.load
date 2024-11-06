@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+#
+# bash.d / t3x helper loader for .bashrc or for scripts that
+# need the features/resources provided to interactive shell 
+# environments. For example the T3X autolauncher.desktop scripts
+# -dayne
+
+if [ -d $HOME/.bash.d ]; then
+  for I in $HOME/.bash.d/*.sh; do
+    source $I  
+  done
+fi

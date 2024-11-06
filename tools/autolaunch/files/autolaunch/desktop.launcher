@@ -7,6 +7,12 @@ LOGDIR=/tmp/.autostart.log/desktop/
 # want to test w/o rebooting?
 # try: sudo systemctl restart lightdm 
 
+# ensure fancy customized desktop features 
+# from t3x and other things are available
+if [ -f $HOME/.bash.d/_bashd.load ]; then
+  source $HOME/.bash.d/_bashd.load
+fi
+
 if [ ! -d $LOGDIR ]; then
 	mkdir -p $LOGDIR
 fi
