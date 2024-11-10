@@ -1,0 +1,32 @@
+#!/usr/bin/bash
+# Example launcher to cause lxterminal to launch with cmatrix
+# and then fullscreen it using wmctlr
+
+if [ "$1" == "setup" ]; then
+  sudo apt install cmatrix cmatrix-xfont wmctrl
+  if [ $? -eq 0 ]; then 
+    echo "Success: dependancies installed"
+    exit 0
+  else
+    echo "Error: Failed to install tools needed"
+    exit 1
+  fi
+fi
+
+if ! command -v cmatrix > /dev/null; then
+  echo "missing cmatrix ... " 
+  echo "  fix: sudo apt install cmatrix"
+  exit 1
+fi
+
+if ! command -v wmctrl > /dev/null; then
+  echo "missing wmctrl .. unable to do fullscreen mode"
+  echo "fix: sudo apt install wmctrl"
+fi
+
+echo "launching lxterminal"
+
+lxterminal -e cmatrix &
+# sleeping a sec then attempting a fullscreen
+sleep 3
+wmctrl -r :ACTIVE: -b toggle,fullscreen
