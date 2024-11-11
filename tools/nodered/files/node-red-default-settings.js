@@ -390,6 +390,10 @@ module.exports = {
                     //fontFamily: "Cascadia Code, Fira Code, Consolas, 'Courier New', monospace",
                     //fontLigatures: true,
                 }
+            },
+            multiplayer: {
+                /** To enable the Multiplayer feature, set this value to true */
+                enabled: true
             }
         },
     
