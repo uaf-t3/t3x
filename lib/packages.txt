@@ -13,3 +13,4 @@ htop
 pv
 ncdu
 btop
+netcat-openbsd
