@@ -21,11 +21,9 @@ function debug {
   fi
 }
 
-
 function info {
     echo -e "\e[32m${1}\e[0m"
 }
-
 
 function boom() { 
   error "${1}"
@@ -182,11 +180,39 @@ function require_root
 	fi
 }
 
+function t3x_tools_list() {
+  local SUB_TOOLS_DIR="${1:-$T3X_SCRIPTS_DIR}/tools"
+  local tools=()
+
+  for tool in $(ls $SUB_TOOLS_DIR/*/*.t3x 2> /dev/null | sort -n ); do
+    debug "$tool found" 
+    tool_name=$(basename $tool .t3x)
+    tool+=("$tool_name")
+  done
+
+  case ${#tools[@]} in
+    0) 
+      # echo   "No tools available"
+      false
+      ;;
+    *) 
+      echo   "Tool(s) available:"
+      for tool in ${tools[@]}; do
+        tool_help=$(grep T3XHELP $SUB_TOOLS_DIR/*/$tool.t3x | 
+                    awk -F ': ' '{print $2}')
+        printf " %-12s : " "$tool" 
+        echo "$tool_help"
+      done
+      ;;
+  esac
+}
+
 function t3x_scripts_list() {
-  SCRIPTS_DIR=${1:-$T3X_SCRIPTS_DIR}
-  debug "checking dir for *.t3x: $SCRIPTS_DIR"
-  scripts=()
-  for script in $(ls $SCRIPTS_DIR/*.t3x 2> /dev/null | sort -n ); do
+  local SUB_SCRIPTS_DIR="${1:-$T3X_SCRIPTS_DIR}/scripts"
+  debug "checking dir for *.t3x: $SUB_SCRIPTS_DIR"
+  local scripts=()
+
+  for script in $(ls $SUB_SCRIPTS_DIR/*.t3x 2> /dev/null | sort -n ); do
     debug "$script found"
     script_name=$(basename $script .t3x)
     scripts+=("$script_name")
@@ -196,17 +222,20 @@ function t3x_scripts_list() {
     0) 
       echo   "No scripts available"
       ;;
-    1) 
-      echo   "Script available: $scripts"
-      ;;
     *) 
-      echo 
-      echo   "Scripts list:     # "
+      echo   "Script(s) available: "
       for script in ${scripts[@]}; do
-        echo "   $script"
+        script_help=$(grep T3XHELP $SUB_SCRIPTS_DIR/$script.t3x | 
+                    awk -F ': ' '{print $2}')
+        printf " %-12s : " "$script" 
+        echo "$script_help"
       done
-      #printf "    %s" "${scripts[0]}"    # first element
-      #printf ", %s" "${scripts[@]:1}" # remaining elements prefixed by ,
       ;;
   esac
 }
+
+function t3x_help_sub() {
+  t3x_tools_list $SCRIPT_DIR
+  t3x_scripts_list $SCRIPT_DIR
+}
+
