@@ -12,3 +12,4 @@ tmux
 htop
 pv
 ncdu
+btop
