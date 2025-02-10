@@ -11,3 +11,5 @@ vim
 tmux
 htop
 pv
+btop
+ncdu
