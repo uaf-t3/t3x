@@ -11,3 +11,6 @@ vim
 tmux
 htop
 pv
+ncdu
+btop
+netcat-openbsd
