@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# T3XHELP: t3 pi helper tools
 source $(t3x -T)
 debug "hi"
 TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
@@ -18,7 +19,7 @@ while [[ $# -gt 0 ]]; do
       shift
       echo "usage: pi [ARGS] COMMAND [ARGS]"
       echo "  help      # this help"
-      t3x_scripts_list $SCRIPT_DIR
+      t3x_help_sub $SCRIPT_DIR
       exit 0
       ;;
     ---)
