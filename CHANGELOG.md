@@ -12,16 +12,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+
+[0.2.0] - 2025-02-10
 - Updated README with better instructions
 - Scrubbing bubble loop fix for hack team cleaning `gitmergescrub`
 - Improved formatting for t3x
 - Enabling both .sh and .t3x for scripts in t3x but only showing .t3x
 - First draft `t3x update` that uses simple sanity checking before `git pull`
-
+- Piles of other updates not cleanly captured in the CHANGELOG
 
 [0.1.0] - 2024-04-15
-
-Initial public release 
+- Initial public release 
 
 ### Added
 - CHANGELOG.md (this file)
