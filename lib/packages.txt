@@ -12,3 +12,6 @@ tmux
 htop
 pv
 lsof
+ncdu
+btop
+netcat-openbsd
