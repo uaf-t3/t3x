@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+# T3XHELP: apt update && upgrade -y
 source $(t3x -T)
 
 figlet "T 3 X   PI"

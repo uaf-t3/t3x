@@ -28,10 +28,11 @@ function t3x_tools_list() {
       echo   
       echo     "Tool list.        # usage: t3x [TOOL_NAME] [OPTIONS]"
       for tool in ${t3xtools[@]}; do
-        echo   "   $tool"
+        tool_help="$(grep T3XHELP $T3X_DIR/tools/*/$tool.t3x | 
+                    awk -F ': ' '{print $2}')"
+        printf " %-12s : " "$tool" 
+        echo   $tool_help
       done
-      #printf "            %s" "${t3xtools[0]}"    # first element
-      #printf ", %s" "${t3xtools[@]:1}" # remaining elements prefixed by ,
       ;;
   esac
 }
