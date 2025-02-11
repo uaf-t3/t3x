@@ -14,7 +14,7 @@ This tool augments the Alaska T3 program and the T3 Alliance Raspberry Pi (RPi) 
 
 Fully manual clone steps:
 ```
-git clone git@github.com:uaf-t3/t3x
+git clone https://github.com/uaf-t3/t3x
 cd t3x
 # Review the scripts starting with bootstrap.sh
 ./scripts/bootstrap.sh
