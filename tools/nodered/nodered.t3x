@@ -61,14 +61,11 @@ debug "command=$command"
 shift
 
 #if not installed or using setup, tell user they need to use setup
-if ! ( command -v node-red || [ $command = "setup" ] ); then
+if ! ( command -v node-red || [ "$command" = "setup" ] ); then
   echo "t3x could not detect a node-red installation to modify."
   echo "You may need to use 't3x nodered setup' to install it first."
-  echo "Would you still like to run the $command?"
-  if(! agree); then
-    echo "aborting $command."
-    exit 0
-  fi
+  echo " ... feel free to ask for help: t3x nodered help"
+  exit 1
 fi
 
 script="$SCRIPT_DIR/scripts/$command.sh"
