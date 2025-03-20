@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 # (c) Dayne Broderson 2024
-# DecTalk installer
+# T3XHELP: DecTalk installer
 # TODO: cache a build to speed this up on older RPis
 
 DEFAULT_DECTALK_INSTALL="$HOME/.local/share/dectalk"
