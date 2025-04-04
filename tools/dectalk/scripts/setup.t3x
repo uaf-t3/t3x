@@ -19,7 +19,7 @@ if ! type boom &> /dev/null; then
 
 fi
 
-APT_DEPS="build-essential libasound2-dev libpulse-dev libgtk2.0-dev unzip git"
+APT_DEPS="build-essential libasound2-dev libpulse-dev libgtk2.0-dev unzip git pkg-config autoconf automake libtool"
 MISSING_PKGS=""
 
 for pkg in $APT_DEPS; do
@@ -65,7 +65,26 @@ echo "############### BEGIN BUILD #####################"
 echo INSTALL_PREFIX=$INSTALL_PREFIX
 sleep 1
 set -x # start debugging mode
+
+if [ ! -d m4 ]; then
+  mkdir -p m4
+  cp  /usr/share/aclocal/pkg.m4 m4/
+  autoconf -fi
+fi
+
+
 autoconf || { boom "autoconf -si"; }  # -si ??
+
+if [ ! -f config.guess ]; then
+  echo "Missing config.guess -- pulling from /usr/share/automake*"
+  cp /usr/share/automake*/config.guess .
+fi
+
+if [ ! -f config.sub ]; then
+  echo "Missing config.sub -- pulling from /usr/share/automake*"
+  cp /usr/share/automake*/config.sub . 
+fi
+
 ./configure --prefix=$INSTALL_PREFIX || { boom "./configure --prefix=$INSTALL_PREFIX"; }
 make -j || { boom "make -j"; }
 sleep 1
