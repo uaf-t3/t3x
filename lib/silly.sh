@@ -17,6 +17,6 @@ if [ "${requirements_met}" = "true" ]; then
   }
 else
   slow_lol() {
-    echo "$msg"
+    echo "$1"
   }
 fi

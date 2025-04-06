@@ -1,241 +1,355 @@
 # usage: source lib/helpers.sh
 # Dayne's basic shell helpers
 # Feel free to use as needed
-# Originally devleoped for d.init
+# Originally developed for d.init
 
-function error {
-  echo -e "\e[31m\e[1m${1}\e[0m"
-  sleep 1
-}
+# ====== Globals & Modes ======
+RESET='\033[0m'
+BOLD='\033[1m'
+BLINK='\033[5m'
+GREEN='\033[32m'
+YELLOW='\033[33m'
+CYAN='\033[36m'
+RED='\033[31m'
+MAGENTA='\033[35m'
 
-function warn {
-  echo -e "\e[93m${1}\e[0m"
-  sleep 0.5
-}
+DRAMATIC="${DRAMATIC:-true}"
+DRY_RUN="${DRY_RUN:-false}"
 
-# export T3X_DEBUG=true # to cause info messages to show up
-function debug {
-  if [ "$T3X_DEBUG" != false ]; then
-    echo "# DEBUG: ${1}"
-    sleep 0.1
-  fi
-}
+# ====== Core Logging ======
+function info()   { echo -e "\e[32m${1}\e[0m"; }
+function warn()   { echo -e "\e[93m${1}\e[0m"; sleep 0.5; }
+function error()  { echo -e "\e[31m\e[1m${1}\e[0m"; sleep 1; }
+function debug()  { [ "$T3X_DEBUG" != false ] && echo "# DEBUG: ${1}"; }
+function boom()   { error "$1"; exit 1; }
+function yak()    { info "$1"; sleep 1; }
 
-function info {
-    echo -e "\e[32m${1}\e[0m"
-}
-
-function boom() { 
-  error "${1}"
-  sleep 1
-  exit 1
-}
-
-function yak() {
-  info "${1}"
-  sleep 1 
-}
-
-function verify_internet() {
-  if $(ping -c 1 google.com > /dev/null); then
-    echo "Internet detected"
-    return 0
-  else
-    echo "Unable to ping google.com -- Are you connected to the internet?"
-    sleep 1
-    if $(ping -c 1 8.8.8.8 > /dev/null); then
-      echo "Unable to ping 8.8.8.8 -- likely no internet!"
-      sleep 1
-      return 1
-    else
-      return 0
-    fi
-  fi
-}
-
-function apt_update() {
-  if verify_internet; then
-    echo "verify internet done"
-  fi
-  sudo apt update
-}
-
-function apt_install() {
-  info "apt_install $1"
-  dpkg -s "$1" > /dev/null 2>&1
-  if [ $? -eq 1 ]; then
-    debug "# sudo apt-get install $1"
-    sudo apt-get install -yq "$1"
-  else
-    info "# packages installed .. skipping : $1"
-  fi
-}
-
+# ====== Command & Network Checks ======
 function got_command() {
-  which "$1" &> /dev/null
-  if [ $? -eq 1 ]; then
-    echo "#>> missing command : $1"
-    return 1
-  else
-    echo "#>> command found: $1"
-    return 0
-  fi
+  command -v "$1" &>/dev/null
 }
 
 function require_command() {
-  which "$1" > /dev/null 2>&1
-  if [ $? -eq 1 ]; then
-    if [ "$2" != "" ]; then
-      echo "#>> missing command : $1"
-      echo "#>> POSSIBLE FIX: $2"
-    fi
+  if ! got_command "$1"; then
+    [ "$2" != "" ] && echo "#>> POSSIBLE FIX: $2"
     boom "required command not found: $1"
   fi
 }
 
+function verify_internet() {
+  if ping -c 1 google.com > /dev/null 2>&1 || ping -c 1 8.8.8.8 > /dev/null 2>&1; then
+    echo "Internet detected"
+    return 0
+  else
+    echo "Unable to ping the internet!"
+    return 1
+  fi
+}
+
+
+
+# ====== APT Utilities ======
+function apt_update() {
+  verify_internet && sudo apt update
+}
+
+function apt_install() {
+  info "apt_install $1"
+  dpkg -s "$1" &>/dev/null || sudo apt-get install -yq "$1"
+}
+
+# ====== Directory & File Helpers ======
+function ensure_mkdir() {
+  [[ ! -d $1 ]] && mkdir -p "$1" || echo "# >> exists: $1"
+}
+
+function cp_file() {
+  [[ ! -f $2 ]] && cp -v "$1" "$2"
+}
+
+function require_root() {
+  [[ $USER != 'root' ]] && boom "this script requires root - please run with sudo"
+}
+
+
+# ====== Run Helpers ======
+function run_cmd() {
+  info "#run START: $1"
+  [ "$T3X_RUN" = "false" ] && info "# FAKE: $1" && return 0
+  $1
+  local RET=$?
+  [[ $RET -eq 0 ]] && info "# DONE: $1" || warn "# FAIL: $1"
+  return $RET
+}
+
+function sudo_run() {
+  echo "SUDO run of: $1"; sleep 0.5; run_cmd "sudo $1"
+}
+
+function run_install_unless() {
+  got_command "$2" && echo "# skip install: $1" || run_cmd "$1"
+}
+
+
+# ====== Interaction ======
 function agree() {
-  while( true ); do
-    echo -n "$1 : (y/n) : "
-    read answer
-    if [ $answer == "n" ]; then
-      return 1; 
-    elif [ $answer == 'y' ]; then
-      return 0;
+  while true; do
+    read -p "$1 (y/n): " answer
+    case $answer in
+      y) return 0;;
+      n) return 1;;
+      *) echo "Invalid answer. Type y or n.";;
+    esac
+  done
+}
+
+# ====== T3X Tool Discovery ======
+function t3x_tools_list() {
+  local dir="${1:-$T3X_SCRIPTS_DIR}/tools"
+  local tools=()
+  for tool in $(ls $dir/*/*.t3x 2>/dev/null | sort -n); do
+    tool_name=$(basename "$tool" .t3x)
+    tools+=("$tool_name")
+  done
+  [ ${#tools[@]} -eq 0 ] && return 1
+  echo "Tool(s) available:"
+  for t in "${tools[@]}"; do
+    help=$(grep T3XHELP $dir/*/$t.t3x | awk -F ': ' '{print $2}')
+    printf " %-12s : %s\n" "$t" "$help"
+  done
+}
+
+function t3x_scripts_list() {
+  local dir="${1:-$T3X_SCRIPTS_DIR}/scripts"
+  debug "checking dir: $dir"
+  local scripts=()
+  for script in $(ls $dir/*.t3x 2>/dev/null | sort -n); do
+    script_name=$(basename "$script" .t3x)
+    scripts+=("$script_name")
+  done
+  echo "Script(s) available:"
+  for s in "${scripts[@]}"; do
+    help=$(grep T3XHELP $dir/$s.t3x | awk -F ': ' '{print $2}')
+    printf " %-12s : %s\n" "$s" "$help"
+  done
+}
+
+function t3x_help_sub() {
+  t3x_tools_list "$SCRIPT_DIR"
+  t3x_scripts_list "$SCRIPT_DIR"
+}
+
+# ====== Vegas Mode Utilities (Logging, State, Animations) ======
+
+function parse_flags() {
+  for arg in "$@"; do
+    if [[ "$arg" == "--dry-run" ]]; then
+      DRAMATIC=true
+      export DRY_RUN=true
     fi
-    echo "invalid answer - provide a 'y' or a 'n'"
-    sleep 0.5
   done
 }
 
 function run() {
-  info "#run() START: $1"
-  sleep 0.4
-  if [ "$T3X_RUN" = "false" ]; then
-    info "#T3X_RUN=false: $1 # fake success"
-    info "#run()  FAKE: $1"
-    return 0
-  fi
-  $1
-  RETVAL=$?
-  if [ $RETVAL -eq 0 ]; then
-    info "#run()  DONE: $1"
+  if [ "$DRY_RUN" = true ]; then
+    echo "[dry-run] $*"
   else
-    warn "#run()  FAIL: $1"
-  fi
-  return $RETVAL;
-}
-
-function sudo_run() {
-  echo "SUDO run of: $1"
-  sleep 0.5
-  run "sudo $1"
-}
-
-
-function run_install_unless() {
-  got_command $2
-  if [[ $? -eq 0 ]]; then
-    echo "#   skipping install: $1"
-    return 1
-  else
-    run "$1"
+    "$@"
   fi
 }
 
-function ensure_mkdir() {
-  if [[ ! -d ${1} ]]; then
-    echo "# >> Creating dir: ${1}"
-    mkdir -p $1
-    if [[ ! $? -eq 0 ]]; then
-      boom "ensure_mkdir failed for creating: ${1}"
+function parse_flags() {
+  for arg in "$@"; do
+    if [[ "$arg" == "--dramatic" ]]; then
+      DRAMATIC=true
+    elif [[ "$arg" == "--dry-run" ]]; then
+      DRY_RUN=true
     fi
-  else
-    echo "# >> exists .. skipping creation: ${1}"
-  fi
+  done
 }
 
-function cp_file {
-  if [[ ! -f $2 ]]; then
-    cp -v $1 $2
-    
-    if [[ -d $2 ]]; then
-      target=$2/`basename $1`
+function pause() {
+  $DRAMATIC && sleep "${1:-0.5}"
+}
+
+function log() {
+  local icon="💬"
+  local indent="    "
+  local first_line=true
+
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    if [ "$first_line" = true ]; then
+      echo -e "${CYAN}${icon} $line${RESET}"
+      first_line=false
     else
-      target=$2
+      echo -e "${CYAN}${indent}$line${RESET}"
     fi
+  done <<< "$1"
+}
 
-    if [[ ! -f $target ]]; then
-      boom "copy of $target failed"
+
+
+function success() {
+  local icon="✅"
+  local indent="    "
+  local first_line=true
+
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    if [ "$first_line" = true ]; then
+      echo -e "${GREEN}${BOLD}${icon} $line${RESET}"
+      first_line=false
+    else
+      echo -e "${GREEN}${indent}$line${RESET}"
     fi
+  done <<< "$1"
+}
+
+function warn() {
+  local icon="⚠️ "
+  local indent="    "
+  local first_line=true
+
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    if [ "$first_line" = true ]; then
+      echo -e "${YELLOW}${BLINK}${icon} $line${RESET}"
+      first_line=false
+    else
+      echo -e "${YELLOW}${indent}$line${RESET}"
+    fi
+  done <<< "$1"
+}
+
+# 📦 For clean multi-line blocks (e.g. file contents or indented output)
+function log_block() {
+  local indent="    "
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    echo -e "${CYAN}${indent}${line}${RESET}"
+  done <<< "$1"
+}
+
+# Spinner setup
+function spin() {
+  local pid=$1
+  local delay=0.1
+  local spinstr='|/-\'
+  tput civis  # hide cursor
+  while kill -0 $pid 2>/dev/null; do
+    for i in $(seq 0 3); do
+      printf "\r${CYAN}🔄  Checking status ${spinstr:$i:1} ${RESET}"
+      pause $delay
+    done
+  done
+  printf "\r${CYAN}🔍  Status check complete!     ${RESET}\n"
+  tput cnorm  # restore cursor
+}
+
+function dramatic_check() {
+  local label="$1"
+  local service="$2"
+  printf "${CYAN}  🔎 ${label}: ${RESET}"
+  $DRAMATIC && pause 0.5
+
+  if systemctl is-active --quiet "$service"; then
+    echo -e "${GREEN}${BOLD}ACTIVE${RESET}"
   else
-    echo "# >> exists .. skipping copy ${2}"
+    echo -e "${RED}${BOLD}INACTIVE${RESET}"
   fi
 }
 
-function require_root 
-{
-	if [ $USER != 'root' ]; then
-		boom "this script requires root - please run with sudo"
-		exit 1
-	fi
-}
+# 🔄 Spinner animation wrapper
+function spinner_wrap() {
+  local message="$1"
+  shift
+  local cmd=("$@")
 
-function t3x_tools_list() {
-  local SUB_TOOLS_DIR="${1:-$T3X_SCRIPTS_DIR}/tools"
-  local tools=()
+  echo -ne "${CYAN}🔄  ${message}...${RESET}"
 
-  for tool in $(ls $SUB_TOOLS_DIR/*/*.t3x 2> /dev/null | sort -n ); do
-    debug "$tool found" 
-    tool_name=$(basename $tool .t3x)
-    tool+=("$tool_name")
+  "${cmd[@]}" &
+  local pid=$!
+  local spinstr='|/-\'
+  local delay=0.1
+  tput civis
+
+  while kill -0 $pid 2>/dev/null; do
+    for i in $(seq 0 3); do
+      printf "\r${CYAN}🔄  ${message}... ${spinstr:$i:1} ${RESET}"
+      pause $delay
+    done
   done
 
-  case ${#tools[@]} in
-    0) 
-      # echo   "No tools available"
-      false
-      ;;
-    *) 
-      echo   "Tool(s) available:"
-      for tool in ${tools[@]}; do
-        tool_help=$(grep T3XHELP $SUB_TOOLS_DIR/*/$tool.t3x | 
-                    awk -F ': ' '{print $2}')
-        printf " %-12s : " "$tool" 
-        echo "$tool_help"
-      done
-      ;;
-  esac
+  wait $pid
+  local status=$?
+
+  printf "\r${CYAN}✅  ${message} complete.     ${RESET}\n"
+  tput cnorm
+  return $status
 }
 
-function t3x_scripts_list() {
-  local SUB_SCRIPTS_DIR="${1:-$T3X_SCRIPTS_DIR}/scripts"
-  debug "checking dir for *.t3x: $SUB_SCRIPTS_DIR"
-  local scripts=()
+function divider() {
+  local char=${1:-─}
+  local width=$(tput cols)
+  printf "${CYAN}%*s${RESET}\n" "$width" '' | tr ' ' "$char"
+}
 
-  for script in $(ls $SUB_SCRIPTS_DIR/*.t3x 2> /dev/null | sort -n ); do
-    debug "$script found"
-    script_name=$(basename $script .t3x)
-    scripts+=("$script_name")
+function header() {
+  local title="$1"
+  divider
+  printf "${BOLD}${MAGENTA}%*s\n" $(((${#title} + $(tput cols)) / 2)) "$title"
+  divider
+}
+
+function type_header() {
+  local text="$1"
+  local delay="${2:-0.03}"
+  local width=$(tput cols)
+  local pad=$(( (width - ${#text}) / 2 ))
+  printf "${MAGENTA}%*s" "$pad" ""
+  for ((i=0; i<${#text}; i++)); do
+    printf "${BOLD}${MAGENTA}${text:$i:1}${RESET}"
+    sleep "$delay"
   done
-
-  case ${#scripts[@]} in
-    0) 
-      echo   "No scripts available"
-      ;;
-    *) 
-      echo   "Script(s) available: "
-      for script in ${scripts[@]}; do
-        script_help=$(grep T3XHELP $SUB_SCRIPTS_DIR/$script.t3x | 
-                    awk -F ': ' '{print $2}')
-        printf " %-12s : " "$script" 
-        echo "$script_help"
-      done
-      ;;
-  esac
+  echo
 }
 
-function t3x_help_sub() {
-  t3x_tools_list $SCRIPT_DIR
-  t3x_scripts_list $SCRIPT_DIR
+function transition_to() {
+  local label="$1"
+  clear
+  type_header "$label"
+  divider
+  pause
 }
 
+function print_mode_status() {
+  for entry in "${TOOLS[@]}"; do
+    IFS=":" read -r label state script <<< "$entry"
+    if is_enabled "$state"; then
+      echo -e "✅ ${GREEN}$label${RESET} is ENABLED"
+    else
+      echo -e "❌ ${RED}$label${RESET} is DISABLED"
+    fi
+  done
+}
+
+function check_service_status() {
+  local label="$1"
+  local service="$2"
+  local result
+
+  if systemctl is-active --quiet "$service"; then
+    result="${GREEN}ACTIVE${RESET}"
+  else
+    result="${RED}INACTIVE${RESET}"
+  fi
+
+  printf "${CYAN}🔎 %-20s ${RESET}%b\n" "$label" "$result"
+}
+
+function log_kv() {
+  local key="$1"
+  local value="$2"
+  local width=$(tput cols)
+  local left="  ${BOLD}${key}${RESET}"
+  local right="${value}"
+  local space=$((width - ${#key} - ${#value} - 5))
+  printf "%s%*s%s\\n" "$left" "$space" "" "$right"
+}

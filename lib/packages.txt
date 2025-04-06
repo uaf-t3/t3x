@@ -15,3 +15,4 @@ ncdu
 btop
 netcat-openbsd
 lsof
+dnsutils
