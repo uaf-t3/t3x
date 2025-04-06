@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Define paths
+CHROME_HISTORY="$HOME/.config/chromium/Default/History"
+BASH_HISTORY="$HOME/.bash_history"
+
+# Delete Chromium history
+if [[ -f "$CHROME_HISTORY" ]]; then
+    echo "Deleting Chromium history..."
+    rm "$CHROME_HISTORY" && echo "Chromium history deleted." || echo "Failed to delete Chromium history."
+else
+    echo "Chromium history file not found."
+fi
+
+# Delete Bash history
+if [[ -f "$BASH_HISTORY" ]]; then
+    echo "Deleting Bash history..."
+    rm "$BASH_HISTORY" && echo "Bash history deleted." || echo "Failed to delete Bash history."
+else
+    echo "Bash history file not found."
+fi
+
+# Clear in-memory bash history too (won't persist until next shell exit)
+history -c

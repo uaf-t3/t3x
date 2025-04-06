@@ -23,6 +23,7 @@ while [[ $# -gt 0 ]]; do
       echo "  lockdown        # configure Node-RED to only be accessible on the local device"
       echo "  unlock          # configure Node-RED to be accessible by local network devices that log in"
       echo "  change_pw       # change the login password used to log in from other devices"
+      echo "  cleanup         # deletes flows.json and "resets" the Node-RED enviroment"
       echo 
       t3x_scripts_list $SCRIPT_DIR
       exit 0
@@ -41,6 +42,11 @@ while [[ $# -gt 0 ]]; do
       info "opening node-RED to the network"
       keep_args+=("$1")
       shift
+      ;;
+    cleanup)
+      echo "Cleaning up Node-RED environment..."
+      "$SCRIPT_DIR/cleanup"
+      exit 0
       ;;
     ---)
       keep_args=(${keep_args[@]} "$@")
