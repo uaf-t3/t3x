@@ -1,6 +1,9 @@
 #!/bin/bash
 # T3XHELP: deletes the chromium and bash histories
 
+# Funny Message:
+echo "Deleting all the history...ever. Bwa Ha Ha!"
+
 # Define paths
 CHROME_HISTORY="$HOME/.config/chromium/Default/History"
 BASH_HISTORY="$HOME/.bash_history"
