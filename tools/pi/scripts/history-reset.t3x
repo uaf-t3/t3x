@@ -3,7 +3,7 @@
 
 # Funny Message:
 echo "Deleting all the history...ever. Bwa Ha Ha!"
-
+sleep 2
 # Define paths
 CHROME_HISTORY="$HOME/.config/chromium/Default/History"
 BASH_HISTORY="$HOME/.bash_history"
