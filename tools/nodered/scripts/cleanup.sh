@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Stops Node-RED Service
-systemctl stop nodered
+sudo systemctl stop nodered
 
 # Get the Node-RED user directory
 NR_DIR="$HOME/.node-red"
