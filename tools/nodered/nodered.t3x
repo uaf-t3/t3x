@@ -45,7 +45,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     cleanup)
       echo "Cleaning up Node-RED environment..."
-      "$SCRIPT_DIR/scripts/cleanup"
+      "$SCRIPT_DIR/scripts/cleanup.sh"
       exit 0
       ;;
     ---)
