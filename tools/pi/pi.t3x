@@ -18,10 +18,16 @@ while [[ $# -gt 0 ]]; do
     help)
       shift
       echo "usage: pi [ARGS] COMMAND [ARGS]"
-      echo "  help      # this help"
+      echo "  help             # this help"
+      echo "  history-rest     # deletes chromium and bash history"
       t3x_help_sub $SCRIPT_DIR
       exit 0
       ;;
+    history-reset)
+    echo "Deleting all the history...ever. Bwa Ha Ha!"
+    "$SCRIPT_DIR/scripts/history-reset.sh"
+      exit 0
+      ;;  
     ---)
       keep_args=(${keep_args[@]} "$@")
       while_loop_done=true
