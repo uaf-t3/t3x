@@ -24,6 +24,15 @@ else
     exit 1
 fi
 
+if [ -f $SETTING_FILE ]; then
+  echo "Backing up existing SETTINGS_FILE: $SETTING_FILE as $SETTINGS_FILE.orig"
+  if [ -f ${SETTING_FILE}.orig ]; then
+    echo "Nevermind .... $SETTINGS_FILE.orig exists already"
+  else
+    cp $SETTING_FILE ${SETTING_FILE}.orig
+  fi
+fi
+
 echo "restoring Node-RED settings from t3x default..."
 if cp "$SETTINGS_TEMPLATE" "$SETTINGS_FILE"; then
     echo "successfully loaded default settings."
