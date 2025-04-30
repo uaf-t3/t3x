@@ -1,3 +1,6 @@
+# Define paths
+CHROME_HISTORY="$HOME/.config/chromium/Default/History"
+
 # Clear bash history
 history -c
 rm ~/.bash_history
@@ -18,3 +21,11 @@ sudo apt clean
 sudo dd if=/dev/zero of=/EMPTY bs=1M || true
 sudo rm -f /EMPTY
 sync
+
+# Delete Chromium history
+if [[ -f "$CHROME_HISTORY" ]]; then
+    echo "Deleting Chromium history..."
+    rm "$CHROME_HISTORY" && echo "Chromium history deleted." || echo "Failed to delete Chromium history."
+else
+    echo "Chromium history file not found."
+fi
