@@ -9,11 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > `### Added | Changed | Removed | Fixed
 > `## [Maj.Min.Tweak] - YYYY-MM-DD`
 
-## [Unreleased]
+## [0.3.0] - 2025-04-30
+- First stable release
 
 ### Changed
 
-[0.2.0] - 2025-02-10
+  - Updated README
+  - Refactored package lists
+  - Fixed `dectalk`
+
+### Added
+
+  - Cleanup script for node-red `cleanup.sh`
+  - Cleanup script for bash history `prep-clean.sh`
+  - Separate package lists for Bullseye, Bookworm
+  - `packages.t3x`
+
+## [0.2.0] - 2025-02-10
+
+### Changed
+
 - Updated README with better instructions
 - Scrubbing bubble loop fix for hack team cleaning `gitmergescrub`
 - Improved formatting for t3x
@@ -21,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - First draft `t3x update` that uses simple sanity checking before `git pull`
 - Piles of other updates not cleanly captured in the CHANGELOG
 
-[0.1.0] - 2024-04-15
+## [0.1.0] - 2024-04-15
 - Initial public release 
 
 ### Added

@@ -21,7 +21,7 @@ if [ ! -f "$NODE_LIST" ]; then
 fi
 
 # Temporarily change permissions of node_modules directory so that installers can write to it
-sudo mkdir /usr/lib/node_modules
+sudo mkdir -p /usr/lib/node_modules
 sudo chmod a+w /usr/lib/node_modules
 
 # Loop through the nodes.txt file

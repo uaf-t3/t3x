@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# T3XHELP: t3 dectalk
+source $(t3x -T)
+TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)  
+
+just_exit=false
+args_collected=false
+while_loop_done=false
+declare -a keep_args
+
+while [[ $# -gt 0 ]]; do
+  if [ "$while_loop_done" == true ]; then
+    break # we hit the --- and just need to move on now
+  fi
+  case "$1" in
+    help)
+      shift
+      echo "usage: dectalk [ARGS] COMMAND [ARGS]"
+      echo "  help      # this help"
+      t3x_help_sub $SCRIPT_DIR
+      exit 0
+      ;;
+    ---)
+      keep_args=(${keep_args[@]} "$@")
+      while_loop_done=true
+      break;  # just let the rest of the arguments carry on
+      ;;
+    *)
+      keep_args+=("$1")
+      shift
+      ;;
+  esac
+done
+
+set -- ${keep_args[@]}
+
+command=$1
+debug "command=$command"
+shift
+
+script="$SCRIPT_DIR/scripts/$command.sh"
+t3xscript="$SCRIPT_DIR/scripts/$command.t3x"
+debug "checking for script=$script"
+if [ -f "$script" ]; then
+  $script $@
+  exit $?
+elif [ -f $t3xscript ]; then
+  $t3xscript $@
+  exit $?
+fi
+error "Error: No $command command .. try asking for help"

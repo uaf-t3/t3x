@@ -18,12 +18,7 @@ if [ -z "$T3X_DEBUG" ]; then
   T3X_DEBUG=false
 fi
 
-#echo "T3X_LIB_DIR: $T3X_LIB_DIR"
-# include lib/helpers.sh 
-source "$T3X_LIB_DIR/helpers.sh"
-source "$T3X_LIB_DIR/silly.sh"
-debug "helpers loaded - yak() is available"
-
+source "$T3X_LIB_DIR/load.sh"
 
 # the scripts directory is ../scripts from this folder
 debug "T3X_LIB_DIR: $T3X_LIB_DIR/../scripts"
