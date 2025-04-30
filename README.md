@@ -1,4 +1,4 @@
-# T3X: A Raspberry Pi Configuration & Maintenance Toolkit
+# T3X: Raspberry Pi Configuration & Maintenance Toolkit
 
 T3X is a modular Bash-based toolkit designed to help educators and developers in the T3 Alliance community **configure, update, and maintain Raspberry Pi systems**. It is *not* an image-building tool, but a **post-flash setup and lifecycle management suite**.
 
@@ -52,3 +52,110 @@ SSH or use a direct keyboard/mouse setup.
 
 ### 3. Install T3X
 
+Fully manual clone steps:
+```
+git clone https://github.com/uaf-t3/t3x
+cd t3x
+# Review the scripts starting with bootstrap.sh
+./scripts/bootstrap.sh
+```
+
+Trust the T3X CHEESE lab team? Recommended easy method:
+```
+curl https://raw.githubusercontent.com/uaf-t3/t3x/main/scripts/bootstrap.sh | bash -e
+```
+Changes/Impacts of installing T3X
+```.bashrc will be setup to include .bash.d/*.sh scripts
+.bash.d/00-t3x.sh will setup $HOME/t3x/bin in user PATH
+.bash.d/00-local.sh will ensure $HOME/.local/bin is in user PATH
+.bash.d/(other).sh other scripts added for quality of life or when a user choosed to include/add a new feature that augments.
+Beyond that the impacts of T3X will depend on what tools from it you run.
+```
+
+### 4. Use the toolkit
+```bash
+t3x help        # See available commands
+t3x update      # Pull the latest version
+t3x harden      # Apply system hardening rules
+```
+
+---
+### Changes/Impacts of installing `T3X`
+
+- `.bashrc` will be setup to include `.bash.d/*.sh` scripts
+- `.bash.d/00-t3x.sh` will setup `$HOME/t3x/bin` in user `PATH`
+- `.bash.d/00-local.sh` will ensure `$HOME/.local/bin` is in user `PATH`
+- `.bash.d/(other).sh` other scripts added for quality of life or when a user chooses to include/add a new feature that augments.
+## 🔧 How Subcommands Work
+
+T3X uses a modular subcommand system like `git` or `kubectl`.
+___
+### Basic Usage
+```bash
+t3x [TOOL_NAME] [SUBCOMMAND] [OPTIONS]
+```
+
+Each command is defined as a `.t3x` file in:
+```
+tools/TOOL_NAME/TOOL_NAME.t3x
+```
+
+### Example Tools
+
+#### `t3x pi`
+Manages Pi-specific settings.
+- `t3x pi update` – Updates the Pi
+- `t3x pi wallpaper` – Sets a fun wallpaper
+- `t3x pi lockdown` – Applies basic security lockdowns
+  - Includes: `enable-wfw`, `ssh-disable`, `password-check`, `vnc-disable`
+
+#### `t3x starship`
+Ensures a custom Starship prompt setup.
+- `t3x starship setup` – Installs & configures [starship.sh](https://starship.sh)
+- `t3x starship launch` – Bonus launch features
+
+### Tool Discovery
+Run this to get started with some tools:
+```bash
+t3x --help
+```
+This will give you a normal help window plus a list of tools you can use!
+
+---
+
+## 👨‍💻 Advanced / Dev Tools
+
+Explore the `tools/` and `scripts/` folders for advanced utilities like:
+- SD card metadata dumping
+- `bashrc` customization templates
+- Cron examples and service helpers
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Fork the repo, make changes, and submit a PR. Suggestions, bug reports, and script submissions from T3 partners are encouraged.
+
+---
+
+## 📄 License
+
+We want this tool to be available for T3 sites and others to use under an open-source license. We picked the [Apache 2.0 license](https://choosealicense.com/licenses/apache-2.0/) with features that support:
+
+| Permissions | Conditions | Limitations |
+| ----------- | ---------- | ----------- | 
+| ✅ Commercial Use | 📘 License notice | ❌ Liability |
+| ✅ Distribution   | 📘 State changes | ❌ Trademark use |
+| ✅ Modification   | 📝 Mark changes | ❌ Warranty |
+| ✅ Patent use     | 📜             |               |
+| ✅ Private use    | 🔇             |               |
+
+See the `LICENSE.md` file for full terms.
+
+---
+
+## 🌐 More Info
+
+- [T3 Alliance Website](https://t3-alliance.org)
+- GitHub Issues: [Report bugs](https://github.com/uaf-t3/t3x/issues)
+- [T3X GitHub](https://github.com/uaf-t3/t3x)
