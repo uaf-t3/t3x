@@ -1,7 +1,7 @@
 if [ -f "$HOME/t3x/VERSION" ]; then
   VERSION=$(cat "$HOME/t3x/VERSION")
 else
-  VERSION="unknown"
+  VERSION=" unknown"
 fi
 
 echo "t3x v$VERSION enabled"
