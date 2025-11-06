@@ -52,15 +52,33 @@ if (( ${#missing_pkgs[@]} > 0 )); then
       echo -e "${GREEN}Database list of packages updated successfull.${NC}"
   fi
 
-  echo "sudo apt install ${missing_pkgs[@]}"
-  sudo apt install ${missing_pkgs[@]} --ignore-missing
-  if [ $? -eq 0 ]; then
-    cowsay "successfully installed missing packages" | lolcat
-    sleep 2
-  else
-    echo -e "${RED}Failed to install all missing packages.${NC}"
-    exit 1
+  # Install packages one at a time
+  installed_count=0
+  failed_count=0
+  declare -a failed_pkgs
+  
+  for package in "${missing_pkgs[@]}"; do
+    echo "Installing $package..."
+    if sudo apt install "$package" -y; then
+      echo -e "${GREEN}✓ Successfully installed $package${NC}"
+      ((installed_count++))
+    else
+      echo -e "${RED}✗ Failed to install $package${NC}"
+      ((failed_count++))
+      failed_pkgs+=("$package")
+    fi
+  done
+  
+  echo ""
+  echo "Installation Summary:"
+  echo -e "${GREEN}Successfully installed: $installed_count packages${NC}"
+  if (( failed_count > 0 )); then
+    echo -e "${RED}Failed to install: $failed_count packages${NC}"
+    echo "Failed packages: ${failed_pkgs[@]}"
   fi
+
+  cowsay -f tux "package installation completed" | lolcat
+  sleep 2
 fi
 
 #############################################################
