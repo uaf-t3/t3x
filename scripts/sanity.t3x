@@ -53,7 +53,7 @@ if (( ${#missing_pkgs[@]} > 0 )); then
   fi
 
   echo "sudo apt install ${missing_pkgs[@]}"
-  sudo apt install ${missing_pkgs[@]}
+  sudo apt install ${missing_pkgs[@]} --ignore-missing
   if [ $? -eq 0 ]; then
     cowsay "successfully installed missing packages" | lolcat
     sleep 2
