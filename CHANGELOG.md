@@ -12,8 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.4.0] - 2025-10-05
 
 ### Changed
-  - changed over to simple raspi-config nonint for set locale #79
-  - swapped out `neofetch` for `fastfetch`
+  - changed over to simple raspi-config nonint for set locale : Fixes #79
+  - swapped out `neofetch` for `fastfetch`: Fixed #78
+  - fixed `script/update.sh` calls to run : Fixes #77
 
 
 ## [0.3.1] - 2025-05-13
