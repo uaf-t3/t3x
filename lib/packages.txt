@@ -1,4 +1,4 @@
-neofetch
+fastfetch
 figlet
 toilet
 cowsay

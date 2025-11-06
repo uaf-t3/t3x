@@ -9,14 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > `### Added | Changed | Removed | Fixed
 > `## [Maj.Min.Tweak] - YYYY-MM-DD`
 
+## [0.4.0] - 2025-10-05
+
+### Changed
+  - swapped out `neofetch` for `fastfetch`
+
+
 ## [0.3.1] - 2025-05-13
 
 ### Changed
-
   - The “t3x enabled” message at the CLI’s top has changed to “t3x v[version number] enabled”.
 
 ## [0.3.0] - 2025-04-30
-- First stable release
+  - First stable release
 
 ### Changed
 
