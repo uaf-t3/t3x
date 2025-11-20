@@ -16,3 +16,4 @@ btop
 netcat-openbsd
 lsof
 dnsutils
+npm
