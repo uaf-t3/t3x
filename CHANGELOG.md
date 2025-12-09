@@ -9,14 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > `### Added | Changed | Removed | Fixed
 > `## [Maj.Min.Tweak] - YYYY-MM-DD`
 
+## [0.4.0] - 2025-10-05
+
+### Changed
+  - changed over to simple raspi-config nonint for set locale : Fixes #79
+  - swapped out `neofetch` for `fastfetch`: Fixed #78
+  - fixed `script/update.sh` calls to run : Fixes #77
+
+
 ## [0.3.1] - 2025-05-13
 
 ### Changed
-
   - The “t3x enabled” message at the CLI’s top has changed to “t3x v[version number] enabled”.
 
 ## [0.3.0] - 2025-04-30
-- First stable release
+  - First stable release
 
 ### Changed
 

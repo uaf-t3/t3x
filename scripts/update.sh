@@ -17,12 +17,12 @@ if [ ! "$CURRENT" == "main" ]; then
     echo "Warning: not on main branch .... but you said -f ... let us keep going"
   else
     if agree "Did you want to switch to the main branch? (git switch main)"; then
-      run "git switch main"
+      run git switch main
       if [ $? -eq 0 ]; then
         echo "success: git switch main"
       else
         sleep 1
-        run "git status"
+        run git status
         echo -e "${RED}failed: git switch main${NC}"
         echo "debug that error and try again"
         sleep 1
@@ -36,4 +36,4 @@ if [ ! "$CURRENT" == "main" ]; then
 fi
 
 # fetch to udpate information on remote
-run "git pull"
+run git pull
