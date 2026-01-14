@@ -28,7 +28,7 @@ sudo chmod a+w /usr/lib/node_modules
 while IFS= read -r node
 do
     echo -e "Attempting to install npm package: ${GREEN}$node${NC}"
-    if ! npm install -g "$node"; then
+    if ! sudo npm install -g "$node"; then
         echo -e "${RED}Error: Failed to install npm package: $node${NC}" >&2
         echo "Continuing to next package..."
     else
