@@ -79,6 +79,9 @@ EOF
     echo "Enabling zram.service..."
     sudo systemctl enable zram.service
 
+    echo "Start the zram.service"
+    sudo systemctl start zram.service
+
   else
     echo "zram.service already exists. Skipping creation."
   fi
