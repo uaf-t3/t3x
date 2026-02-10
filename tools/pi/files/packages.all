@@ -1,0 +1,26 @@
+git
+curl
+wget
+vim
+htop
+tmux
+python3
+python3-pip
+python3-venv
+build-essential
+jq
+mosquitto-clients         # MQTT CLI tools
+net-tools
+dnsutils
+zip
+unzip
+i2c-tools
+spi-tools
+minicom
+screen
+golang
+ruby
+ruby-dev
+build-essential
+libssl-dev
+zlib1g-dev

@@ -21,14 +21,14 @@ if [ ! -f "$NODE_LIST" ]; then
 fi
 
 # Temporarily change permissions of node_modules directory so that installers can write to it
-sudo mkdir /usr/lib/node_modules
+sudo mkdir -p /usr/lib/node_modules
 sudo chmod a+w /usr/lib/node_modules
 
 # Loop through the nodes.txt file
 while IFS= read -r node
 do
     echo -e "Attempting to install npm package: ${GREEN}$node${NC}"
-    if ! npm install -g "$node"; then
+    if ! sudo npm install -g "$node"; then
         echo -e "${RED}Error: Failed to install npm package: $node${NC}" >&2
         echo "Continuing to next package..."
     else

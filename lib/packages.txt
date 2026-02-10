@@ -1,4 +1,4 @@
-neofetch
+fastfetch
 figlet
 toilet
 cowsay
@@ -11,3 +11,9 @@ vim
 tmux
 htop
 pv
+ncdu
+btop
+netcat-openbsd
+lsof
+dnsutils
+npm

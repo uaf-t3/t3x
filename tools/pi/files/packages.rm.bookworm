@@ -1,0 +1,5 @@
+# Old GPIO library no longer needed
+python3-rpi.gpio
+
+# Possibly conflicting dependency
+libpigpio-dev

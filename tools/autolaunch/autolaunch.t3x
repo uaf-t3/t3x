@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+# T3XHELP: autolaunch for Documents/autolaunch/*
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 
 autolaunch_setup() {
