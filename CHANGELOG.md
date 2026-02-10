@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `script/zram-setup.sh` to enable zram and swap space. Trixie compatible fix.
   - Switched to apt install for starship
   - Updated nerdfont to latest https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/UbuntuMono.zip
-  - 
+  - Added `slurp` and `grim` for screen caps
+  - Added a 'snip' comman to t3x bin
 
 ## [0.4.0] - 2025-10-05
 ### Changed

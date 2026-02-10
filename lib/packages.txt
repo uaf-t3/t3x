@@ -17,3 +17,5 @@ netcat-openbsd
 lsof
 dnsutils
 npm
+slurp
+grim
