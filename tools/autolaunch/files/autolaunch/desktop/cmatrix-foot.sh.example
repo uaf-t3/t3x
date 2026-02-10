@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+# Example launcher to cause foot to launch in full screen
+#
+# Foot is nice alternative to lxterminal because it supports
+# a --fullscreen option
+
+if ! command -v foot > /dev/null; then
+	echo "missing foot terminal ..."
+	echo "  fix: sudo apt install foot"
+	exit 1
+fi
+
+if ! command -v cmatrix > /dev/null; then
+  echo "missing cmatrix ... " 
+  echo "  fix: sudo apt install cmatrix"
+  exit 1
+fi
+
+foot --fullscreen cmatrix

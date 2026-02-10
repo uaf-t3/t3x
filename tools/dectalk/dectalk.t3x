@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# T3XHELP: t3 pi helper tools
+# T3XHELP: t3 dectalk
 source $(t3x -T)
-debug "hi"
 TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)  
 
@@ -17,7 +16,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     help)
       shift
-      echo "usage: pi [ARGS] COMMAND [ARGS]"
+      echo "usage: dectalk [ARGS] COMMAND [ARGS]"
       echo "  help      # this help"
       t3x_help_sub $SCRIPT_DIR
       exit 0

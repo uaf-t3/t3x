@@ -6,7 +6,8 @@ SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" &> /dev/null & pwd )"
 
 #local FONTZIP_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
 #FONTZIP_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/Ubuntu.zip"
-FONTZIP_URL_DEFAULT="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/UbuntuMono.zip"
+#FONTZIP_URL_DEFAULT="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/UbuntuMono.zip"
+FONTZIP_URL_DEFAULT="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/UbuntuMono.zip"
 FONTZIP_URL=${1:-$FONTZIP_URL_DEFAULT}
 ZIPFILE=$(basename $FONTZIP_URL)
 FONTNAME=$(basename $ZIPFILE .zip)
@@ -23,7 +24,6 @@ if ! command -v wget > /dev/null 2>&1 ; then
   echo "       fix: sudo apt install wget"
   exit 1
 fi
-
 
 cd $ZIPCACHE
 if [ -f "$ZIPFILE" ]; then

@@ -1,0 +1,34 @@
+#!/usr/bin/bash
+#
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
+LAUNCHER_DIR="${SCRIPT_DIR}/desktop/"
+LOGDIR=/tmp/.autostart.log/desktop/
+
+# want to test w/o rebooting?
+# try: sudo systemctl restart lightdm 
+
+# ensure fancy customized desktop features 
+# from t3x and other things are available
+if [ -f $HOME/.bash.d/_bashd.load ]; then
+  source $HOME/.bash.d/_bashd.load
+fi
+
+if [ ! -d $LOGDIR ]; then
+	mkdir -p $LOGDIR
+fi
+
+if [ -d "$LAUNCHER_DIR" ]; then
+    sh_files=("$LAUNCHER_DIR"/*.sh)
+    if [ -e "${sh_files[0]}" ]; then
+        # Loop through and run each .sh file
+        for script in "$LAUNCHER_DIR"/*.sh; do
+	  SCRIPT_LOG="${LOGDIR}/$(basename ${script%.sh}).log"
+          echo "Running $script "
+          nohup "$script" > "${SCRIPT_LOG}" 2>&1 &
+        done
+    else
+        echo "No .sh files found in $LAUNCHER_DIR"
+    fi
+else
+    echo "Directory $LAUNCHER_DIR does not exist"
+fi

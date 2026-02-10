@@ -1,0 +1,24 @@
+#!/usr/bin/bash
+# T3XHELP: autolaunch for Documents/autolaunch/*
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
+
+autolaunch_setup() {
+  echo "launching setup.sh"
+  cd $SCRIPT_DIR
+  $SCRIPT_DIR/setup.sh
+  if [ $? -eq 0 ]; then
+    echo "setup success"
+  else
+    echo "Sadness setting up autolaunch ... please report issue to:"
+    echo "     https://github.com/uaf-t3/t3x/issues "
+  fi
+}
+
+case $1 in 
+  setup)
+    autolaunch_setup
+    ;;
+  *)
+    echo "usage: setup"
+    ;;
+esac

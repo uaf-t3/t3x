@@ -85,7 +85,13 @@ if $(grep "T3X.bash.d" $HOME/.bashrc  > /dev/null); then
   echo "Done: Detected .bash.d setup in .bashrc already"
 else
   echo "Start: setup .bash.d up in .bashrc"
-  echo -e '\n\n# T3X.bash.d - if interactive then do fancy setup stuff\nif [[ $- == *i* ]]; then\n  if [ -d $HOME/.bash.d ]; then\n    for I in $HOME/.bash.d/*.sh; do\n      source $I  \n    done\n  fi\nfi\n' >> ~/.bashrc
+  echo '
+# T3X.bash.d - if interactive then do .bash.d
+if [[ $- == *i* ]]; then
+  if [ -f $HOME/.bash.d/_bashd.load ]; then
+    source $HOME/.bash.d/_bashd.load
+  fi
+fi' >> ~/.bashrc
 fi
 
 # setup .bash.d folder

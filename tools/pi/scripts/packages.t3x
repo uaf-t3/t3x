@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+
+# Load the shared t3x library with dramatic flair & logging
+source $(t3x -T)
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
+DRY_RUN=false
+
+# 🌍 Detect OS codename
+get_os_codename() {
+  lsb_release -c -s 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2
+}
+
+# 📦 Install packages from a file
+install_from_file() {
+  local file="$1"
+  [ -f "$file" ] || {
+    warn "No package file found: $file"
+    return
+  }
+
+  info "Processing packages from: $(basename "$file")"
+  if $DRY_RUN; then
+    info "📋 Would install:"
+    cat "$file"
+  else
+    xargs -a "$file" sudo apt-get install -y
+  fi
+}
+
+remove_from_file() {
+  local file="$1"
+
+  if [ ! -f "$file" ]; then
+    warn "🗑️  No removal list found at: $file"
+    return
+  fi
+
+  info "🧽 Preparing to remove packages listed in: $(basename "$file")"
+
+  while IFS= read -r pkg; do
+    # Skip comments or empty lines
+    [[ -z "$pkg" || "$pkg" =~ ^# ]] && continue
+
+    if $DRY_RUN; then
+      info "🚫 Would remove: $pkg"
+    else
+      info "🚫 Removing: $pkg"
+      sudo apt-get remove -y "$pkg" || warn "⚠️ Failed to remove $pkg"
+    fi
+  done < "$file"
+
+  success "✅ Package removal from $(basename "$file") complete."
+}
+
+
+# 🎯 Main function
+main() {
+  OS_CODENAME=$(get_os_codename)
+
+  if [ -z "$OS_CODENAME" ]; then
+    error "🧨 Could not determine OS codename."
+    exit 1
+  fi
+
+  info "🎩 T3x Package Wizard is summoning packages for: $OS_CODENAME"
+  pause 0.5
+
+  info "✨ Updating package lists..."
+  $DRY_RUN || sudo apt-get update
+  pause 0.5
+
+  install_from_file "$SCRIPT_DIR/../files/packages.all"
+  install_from_file "$SCRIPT_DIR/../files/packages.$OS_CODENAME"
+  remove_from_file "$SCRIPT_DIR/../files/packages.rm.all"
+  remove_from_file "$SCRIPT_DIR/../files/packages.rm.$OS_CODENAME"
+
+  success "✅ All relevant packages summoned and installed!"
+}
+
+# 🧪 CLI Args
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+    --dry-run)
+      DRY_RUN=true
+      ;;
+    *)
+      warn "Unknown argument: $1"
+      ;;
+  esac
+  shift
+done
+
+main
