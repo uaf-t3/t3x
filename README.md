@@ -5,8 +5,6 @@ T3X is a modular Bash-based toolkit designed to help educators and developers in
 > [!note] 
 > **Safe, Secure, Accessible & Fun:** The core mission of this project is to provide an interface that allows T3 learners to fortify the security and configuration of their devices, protecting them from potential cyber threats. It's not just about providing technology; it's about delivering safe and secure technology. Doing this should also be fun and adaptable to the evolving needs of the T3 community and their projects.
 
----
-
 ## 🚀 Purpose
 
 T3X standardizes and simplifies Raspberry Pi setup tasks across educational deployments. After flashing Raspberry Pi OS, T3X helps bring devices up to T3 standards:
@@ -16,8 +14,6 @@ T3X standardizes and simplifies Raspberry Pi setup tasks across educational depl
 - Applies standard T3 user configs
 - Simplifies long-term maintenance
 
----
-
 ## 🧰 What T3X Does
 
 - 🛠️ Configures freshly-flashed Pi OS devices
@@ -26,8 +22,6 @@ T3X standardizes and simplifies Raspberry Pi setup tasks across educational depl
 - 🧼 Fixes common bugs or misconfigurations
 - 🔄 Updates itself from GitHub
 - 🧪 Provides extra scripts for optional or dev tasks
-
----
 
 ## 📦 Repo Overview
 
@@ -80,16 +74,19 @@ t3x harden      # Apply system hardening rules
 ```
 
 ---
+
 ### Changes/Impacts of installing `T3X`
 
 - `.bashrc` will be setup to include `.bash.d/*.sh` scripts
 - `.bash.d/00-t3x.sh` will setup `$HOME/t3x/bin` in user `PATH`
 - `.bash.d/00-local.sh` will ensure `$HOME/.local/bin` is in user `PATH`
 - `.bash.d/(other).sh` other scripts added for quality of life or when a user chooses to include/add a new feature that augments.
+
 ## 🔧 How Subcommands Work
 
 T3X uses a modular subcommand system like `git` or `kubectl`.
 ___
+
 ### Basic Usage
 ```bash
 t3x [TOOL_NAME] [SUBCOMMAND] [OPTIONS]
@@ -135,6 +132,8 @@ Explore the `tools/` and `scripts/` folders for advanced utilities like:
 ## 🤝 Contributing
 
 Contributions are welcome! Fork the repo, make changes, and submit a PR. Suggestions, bug reports, and script submissions from T3 partners are encouraged.
+
+We welcome new ideas for t3x.  If you are new to git and GitHub we you might consider installing [gitflow-toolkit](https://github.com/mritd/gitflow-toolkit).
 
 ---
 

@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated nerdfont to latest https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/UbuntuMono.zip
   - Added `slurp` and `grim` for screen caps
   - Added a 'snip' comman to t3x bin
+  - Recommended using the gitflow toolkit in README.md for contributors
 
 ## [0.4.0] - 2025-10-05
 ### Changed
