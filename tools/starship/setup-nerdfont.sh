@@ -31,7 +31,9 @@ if [ -f "$ZIPFILE" ]; then
 else
   echo "Starting download $FONTZIP_URL"
   wget --quiet "$FONTZIP_URL" 
-  if [ $? -ne 0 ]; then
+  if [ $? -eq 0 ]; then
+    echo "Download of font successful!"
+  else
     echo "Fatal: Download of font failed: wget $FONTZIP_URL"
     exit 1
   fi
@@ -84,4 +86,12 @@ if command -v lxterminal; then
   fi
 else
   echo "Skipping lxterminal configuration ... lxterminal is not installed"
+fi
+
+
+if command -v gucharmap > /dev/null; then # 🐼
+  echo "Skipping install: gucharmap already installed"
+else
+  echo "Missing gucharmap -- for finding all the pandas ... installing"
+  sudo apt install gucharmap
 fi
