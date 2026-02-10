@@ -9,8 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > `### Added | Changed | Removed | Fixed
 > `## [Maj.Min.Tweak] - YYYY-MM-DD`
 
-## [0.4.0] - 2025-10-05
 
+## Unreleased
+
+### Changed
+  - Added `script/zram-setup.sh` to enable zram and swap space. Trixie compatible fix.
+  - Switched to apt install for starship
+  - Updated nerdfont to latest https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/UbuntuMono.zip
+  - 
+
+## [0.4.0] - 2025-10-05
 ### Changed
   - changed over to simple raspi-config nonint for set locale : Fixes #79
   - swapped out `neofetch` for `fastfetch`: Fixed #78

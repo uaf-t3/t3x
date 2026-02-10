@@ -13,13 +13,8 @@ sleep 0.7
 if command -v starship > /dev/null ; then
   echo "Skipping starship install ... starship command available already"
 else
-  echo "Latest starship installer can be done like this:"
-  echo "         curl -sS https://starship.rs/install.sh | sh"
-  echo "Using a t3x cached copy that has been reviewed."
-  ./cache/starship.rs-install.sh
+  sudo apt install starship
   if [ $? -eq 0 ]; then
-    echo "Starship install successfull done"
-  else
     echo "Starship install failed. Try again"
     sleep 1
     exit 1
