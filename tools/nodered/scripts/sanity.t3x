@@ -1,0 +1,291 @@
+#!/usr/bin/env bash
+# T3XHELP: sanity check the current nodered install
+set -euo pipefail
+
+# ======= CONFIG YOU CAN EDIT / OVERRIDE =======
+MIN_NODE_RED_VERSION="${MIN_NODE_RED_VERSION:-3.1.0}"
+DEFAULT_PORT="${NODE_RED_PORT:-1880}"
+
+# Default nodes file (can be overridden by first arg or NODES_FILE env var)
+DEFAULT_NODES_FILE="../files/nodes.txt"
+
+START_TIMEOUT_SECONDS="${START_TIMEOUT_SECONDS:-25}"
+# =============================================
+
+log()  { printf "%b\n" "$*"; }
+info() { log "✅ $*"; }
+warn() { log "⚠️  $*"; }
+err()  { log "❌ $*" >&2; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+# Compare semver-ish strings: returns 0 if $1 >= $2
+ver_ge() {
+  local a b
+  a="$(printf "%s" "$1" | sed -E 's/^v//; s/[-+].*$//')"
+  b="$(printf "%s" "$2" | sed -E 's/^v//; s/[-+].*$//')"
+  local first
+  first="$(printf "%s\n%s\n" "$b" "$a" | sort -V | head -n1)"
+  [[ "$first" == "$b" ]]
+}
+
+detect_service() {
+  if systemctl list-unit-files --type=service 2>/dev/null | awk '{print $1}' | grep -qx "nodered.service"; then
+    echo "nodered.service"; return 0
+  fi
+  if systemctl list-unit-files --type=service 2>/dev/null | awk '{print $1}' | grep -qx "node-red.service"; then
+    echo "node-red.service"; return 0
+  fi
+  echo ""
+}
+
+service_active() {
+  local svc="$1"
+  systemctl is-active --quiet "$svc"
+}
+
+service_user() {
+  local svc="$1"
+  systemctl show "$svc" -p User --value 2>/dev/null || true
+}
+
+user_home() {
+  local u="$1"
+  getent passwd "$u" | cut -d: -f6
+}
+
+node_red_userdir_guess() {
+  local svc="$1"
+  local u h
+  u="$(service_user "$svc")"
+  if [[ -z "${u}" ]]; then
+    u="${SUDO_USER:-$(id -un)}"
+  fi
+  h="$(user_home "$u")"
+  if [[ -z "${h}" ]]; then
+    h="/home/$u"
+  fi
+  printf "%s/.node-red" "$h"
+}
+
+port_listen_info() {
+  local port="$1"
+  ss -ltnp 2>/dev/null | awk -v p=":$port" '$0 ~ p && $1=="LISTEN" {print}'
+}
+
+wait_for_listen() {
+  local port="$1" timeout="$2"
+  local i
+  for ((i=0; i<timeout; i++)); do
+    if port_listen_info "$port" | grep -q .; then
+      return 0
+    fi
+    sleep 1
+  done
+  return 1
+}
+
+detect_bind_scope() {
+  local port="$1"
+  local lines
+  lines="$(port_listen_info "$port" || true)"
+  if [[ -z "$lines" ]]; then
+    echo "not_listening"; return 0
+  fi
+
+  if echo "$lines" | grep -Eq '([[:space:]]|^)(0\.0\.0\.0:|[[]::[]]:)'"$port" ; then
+    echo "public"; return 0
+  fi
+  if echo "$lines" | grep -Eq '([[:space:]]|^)(127\.0\.0\.1:|[[]::1[]]:)'"$port" ; then
+    echo "localhost"; return 0
+  fi
+
+  echo "specific_interface"
+}
+
+get_node_red_version() {
+  if have node-red; then
+    node-red --version 2>/dev/null | head -n1 | tr -d '\r' || true
+  elif have node-red-pi; then
+    node-red-pi --version 2>/dev/null | head -n1 | tr -d '\r' || true
+  else
+    echo ""
+  fi
+}
+
+read_required_nodes() {
+  local file="$1"
+  if [[ ! -f "$file" ]]; then
+    err "Nodes list file not found: $file"
+    err "Tip: pass a path: ./nodered_sanity_check.sh /path/to/nodes.txt"
+    exit 2
+  fi
+
+  # Read lines; ignore blanks and comments; trim whitespace
+  mapfile -t REQUIRED_NODES < <(
+    sed -E 's/\r$//' "$file" \
+    | sed -E 's/[[:space:]]+#.*$//' \
+    | sed -E 's/^[[:space:]]+|[[:space:]]+$//g' \
+    | awk 'NF>0'
+  )
+
+  if ((${#REQUIRED_NODES[@]} == 0)); then
+    err "Nodes file contained no usable package names: $file"
+    exit 2
+  fi
+}
+
+npm_check_node_installed() {
+  local userdir="$1"
+  local pkg="$2"
+
+  if ! have npm; then
+    err "npm is not installed; cannot verify nodes via npm."
+    return 2
+  fi
+  if [[ ! -d "$userdir" ]]; then
+    err "Node-RED userDir not found: $userdir"
+    return 2
+  fi
+
+  # Verify installed in that userDir
+  if npm --prefix "$userdir" ls --depth=0 --silent "$pkg" >/dev/null 2>&1; then
+    return 0
+  fi
+  return 1
+}
+
+main() {
+  if ! have systemctl; then
+    err "systemctl not found; this script expects systemd (typical Raspberry Pi OS)."
+    exit 2
+  fi
+
+  local nodes_file="${NODES_FILE:-${1:-$DEFAULT_NODES_FILE}}"
+  read_required_nodes "$nodes_file"
+  info "Loaded ${#REQUIRED_NODES[@]} required node packages from: $nodes_file"
+
+  local port="$DEFAULT_PORT"
+  local svc started_by_us="false"
+
+  svc="$(detect_service)"
+  if [[ -z "$svc" ]]; then
+    err "Could not find Node-RED systemd service (nodered.service or node-red.service)."
+    err "If Node-RED is installed but not as a service, tell me and I’ll adapt this to node-red-start/node-red-stop."
+    exit 2
+  fi
+  info "Detected Node-RED service: $svc"
+
+  local was_active="false"
+  if service_active "$svc"; then
+    was_active="true"
+    info "Service is currently running."
+  else
+    warn "Service is currently stopped."
+  fi
+
+  local nr_user nr_userdir
+  nr_user="$(service_user "$svc")"
+  if [[ -z "$nr_user" ]]; then
+    nr_user="${SUDO_USER:-$(id -un)}"
+    warn "Could not read service User=; assuming user: $nr_user"
+  else
+    info "Service runs as user: $nr_user"
+  fi
+
+  nr_userdir="$(node_red_userdir_guess "$svc")"
+  info "Assumed Node-RED userDir: $nr_userdir"
+
+  # Start if needed
+  if [[ "$was_active" == "false" ]]; then
+    info "Starting $svc..."
+    sudo systemctl start "$svc"
+    started_by_us="true"
+
+    if wait_for_listen "$port" "$START_TIMEOUT_SECONDS"; then
+      info "Node-RED is now listening on port $port."
+    else
+      warn "Timed out waiting for Node-RED to listen on port $port."
+      warn "Service status:"
+      sudo systemctl --no-pager -l status "$svc" || true
+    fi
+  fi
+
+  # Bind / port scope reporting
+  local scope listeners
+  scope="$(detect_bind_scope "$port")"
+  case "$scope" in
+    localhost) info "Port $port appears bound to localhost only (127.0.0.1 / ::1)." ;;
+    public) warn "Port $port appears bound to ALL interfaces (0.0.0.0 / ::). Potentially reachable from the network." ;;
+    specific_interface) warn "Port $port appears bound to a specific non-loopback interface (LAN IP). Potentially reachable from the network." ;;
+    not_listening) warn "Port $port is not currently listening." ;;
+  esac
+
+  listeners="$(port_listen_info "$port" || true)"
+  if [[ -n "$listeners" ]]; then
+    log "ℹ️  Listener(s):"
+    log "$listeners"
+  fi
+
+  # Version check
+  local ver version_ok="unknown"
+  ver="$(get_node_red_version)"
+  if [[ -z "$ver" ]]; then
+    warn "Could not determine Node-RED version via node-red/node-red-pi in PATH."
+  else
+    info "Node-RED version detected: $ver"
+    if ver_ge "$ver" "$MIN_NODE_RED_VERSION"; then
+      info "Version OK: $ver >= $MIN_NODE_RED_VERSION"
+      version_ok="true"
+    else
+      err "Version TOO OLD: $ver < $MIN_NODE_RED_VERSION"
+      version_ok="false"
+    fi
+  fi
+
+  # Node checks
+  local missing=()
+  local ok=()
+  for pkg in "${REQUIRED_NODES[@]}"; do
+    if npm_check_node_installed "$nr_userdir" "$pkg"; then
+      ok+=("$pkg")
+    else
+      missing+=("$pkg")
+    fi
+  done
+
+  if ((${#ok[@]} > 0)); then
+    info "Confirmed installed nodes:"
+    for p in "${ok[@]}"; do log "  - $p"; done
+  fi
+
+  if ((${#missing[@]} > 0)); then
+    err "Missing required nodes:"
+    for p in "${missing[@]}"; do log "  - $p"; done
+    err "Install (example):"
+    err "  cd \"$nr_userdir\" && npm install <package> --save"
+  else
+    info "All required nodes are installed."
+  fi
+
+  # Stop if we started it
+  if [[ "$started_by_us" == "true" ]]; then
+    info "Stopping $svc (because it was stopped when we began)..."
+    sudo systemctl stop "$svc"
+    info "Stopped."
+  else
+    info "Leaving service running (because it was running when we began)."
+  fi
+
+  # Exit nonzero if version too old (when known) or nodes missing
+  local exit_code=0
+  if [[ "$version_ok" == "false" ]]; then
+    exit_code=1
+  fi
+  if ((${#missing[@]} > 0)); then
+    exit_code=1
+  fi
+  exit "$exit_code"
+}
+
+main "$@"

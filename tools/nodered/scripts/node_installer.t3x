@@ -1,0 +1,210 @@
+#!/usr/bin/env bash
+# T3XHELP: install all the dependancy nodes we need for T3
+set -euo pipefail
+
+# Installs nodes where Node-RED expects them: ~/.node-red/node_modules
+# No global writes, no /usr/lib/node_modules permission hacks
+# Works cleanly with your sanity-check script (same userDir assumption)
+# Re-run safe: it skips already-installed packages
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+
+# ===== CONFIG =====
+NODE_LIST="${NODE_LIST:-$SCRIPT_DIR/../files/nodes.txt}"
+
+# If you want a specific Node-RED userDir, set NODE_RED_USERDIR=/home/pi/.node-red etc.
+NODE_RED_USERDIR="${NODE_RED_USERDIR:-}"
+
+# Restart Node-RED if it is currently running (true/false)
+RESTART_IF_RUNNING="${RESTART_IF_RUNNING:-true}"
+
+# Install missing prerequisites via apt if needed
+APT_INSTALL_DEPS="${APT_INSTALL_DEPS:-true}"
+# ==================
+
+# ANSI
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; CYAN='\033[0;36m'; NC='\033[0m'
+info() { echo -e "${GREEN}✅ $*${NC}"; }
+warn() { echo -e "${YELLOW}⚠️  $*${NC}"; }
+err()  { echo -e "${RED}❌ $*${NC}" >&2; }
+note() { echo -e "${CYAN}ℹ️  $*${NC}"; }
+
+have() { command -v "$1" >/dev/null 2>&1; }
+
+detect_service() {
+  if systemctl list-unit-files --type=service 2>/dev/null | awk '{print $1}' | grep -qx "nodered.service"; then
+    echo "nodered.service"; return 0
+  fi
+  if systemctl list-unit-files --type=service 2>/dev/null | awk '{print $1}' | grep -qx "node-red.service"; then
+    echo "node-red.service"; return 0
+  fi
+  echo ""
+}
+
+service_active() {
+  local svc="$1"
+  systemctl is-active --quiet "$svc"
+}
+
+service_user() {
+  local svc="$1"
+  systemctl show "$svc" -p User --value 2>/dev/null || true
+}
+
+user_home() {
+  local u="$1"
+  getent passwd "$u" | cut -d: -f6
+}
+
+guess_userdir() {
+  local svc="$1"
+  local u h
+  u="$(service_user "$svc")"
+  if [[ -z "$u" ]]; then
+    u="${SUDO_USER:-$(id -un)}"
+  fi
+  h="$(user_home "$u")"
+  if [[ -z "$h" ]]; then
+    h="/home/$u"
+  fi
+  echo "$h/.node-red"
+}
+
+read_nodes() {
+  local file="$1"
+  if [[ ! -f "$file" ]]; then
+    err "Node list file not found: $file"
+    exit 1
+  fi
+
+  mapfile -t NODES < <(
+    sed -E 's/\r$//' "$file" \
+      | sed -E 's/[[:space:]]+#.*$//' \
+      | sed -E 's/^[[:space:]]+|[[:space:]]+$//g' \
+      | awk 'NF>0'
+  )
+
+  if ((${#NODES[@]} == 0)); then
+    err "No packages found in $file"
+    exit 1
+  fi
+}
+
+ensure_deps() {
+  if have npm && have node; then
+    return 0
+  fi
+
+  if [[ "$APT_INSTALL_DEPS" != "true" ]]; then
+    err "Missing node/npm and APT_INSTALL_DEPS=false, refusing to install dependencies."
+    exit 2
+  fi
+
+  warn "node and/or npm missing. Installing via apt..."
+  sudo apt-get update
+  sudo apt-get install -y nodejs npm
+}
+
+npm_installed_in_userdir() {
+  local userdir="$1"
+  local pkg="$2"
+  npm --prefix "$userdir" ls --depth=0 --silent "$pkg" >/dev/null 2>&1
+}
+
+install_pkg_userdir() {
+  local userdir="$1"
+  local pkg="$2"
+  # Install into Node-RED userDir (where Node-RED will load nodes)
+  npm --prefix "$userdir" install --silent "$pkg"
+}
+
+main() {
+  if ! have systemctl; then
+    err "systemctl not found; this script expects a systemd-based system."
+    exit 2
+  fi
+
+  local svc
+  svc="$(detect_service)"
+  if [[ -z "$svc" ]]; then
+    warn "Could not detect nodered.service or node-red.service."
+    warn "Proceeding anyway, but restart behavior may not work."
+  else
+    note "Detected service: $svc"
+  fi
+
+  ensure_deps
+
+  read_nodes "$NODE_LIST"
+  info "Loaded ${#NODES[@]} packages from: $NODE_LIST"
+
+  local userdir
+  if [[ -n "$NODE_RED_USERDIR" ]]; then
+    userdir="$NODE_RED_USERDIR"
+  elif [[ -n "$svc" ]]; then
+    userdir="$(guess_userdir "$svc")"
+  else
+    userdir="${HOME}/.node-red"
+  fi
+
+  note "Using Node-RED userDir: $userdir"
+  mkdir -p "$userdir"
+
+  # Helpful if package-lock.json exists but is owned by root from past installs.
+  if [[ ! -w "$userdir" ]]; then
+    err "UserDir is not writable: $userdir"
+    err "Fix ownership, e.g.: sudo chown -R $(id -un):$(id -gn) \"$userdir\""
+    exit 2
+  fi
+
+  local was_running="false"
+  if [[ -n "$svc" ]] && service_active "$svc"; then
+    was_running="true"
+    note "Node-RED is currently running."
+  fi
+
+  local installed=() skipped=() failed=()
+  for pkg in "${NODES[@]}"; do
+    if npm_installed_in_userdir "$userdir" "$pkg"; then
+      skipped+=("$pkg")
+      echo -e "⏭️  ${CYAN}Already installed${NC}: $pkg"
+      continue
+    fi
+
+    echo -e "⬇️  Installing: ${CYAN}$pkg${NC}"
+    if install_pkg_userdir "$userdir" "$pkg"; then
+      installed+=("$pkg")
+      echo -e "${GREEN}✅ Installed${NC}: $pkg"
+    else
+      failed+=("$pkg")
+      echo -e "${RED}❌ Failed${NC}: $pkg"
+    fi
+  done
+
+  echo
+  info "Summary"
+  note "  Installed: ${#installed[@]}"
+  note "  Skipped:   ${#skipped[@]}"
+  note "  Failed:    ${#failed[@]}"
+
+  if ((${#failed[@]} > 0)); then
+    err "Failed packages:"
+    for p in "${failed[@]}"; do echo "  - $p"; done
+  fi
+
+  # Restart if requested and it was running
+  if [[ "$RESTART_IF_RUNNING" == "true" ]] && [[ "$was_running" == "true" ]] && [[ -n "$svc" ]]; then
+    warn "Restarting $svc to load any new nodes..."
+    sudo systemctl restart "$svc"
+    info "Restarted."
+  else
+    note "Not restarting Node-RED."
+  fi
+
+  # Exit nonzero if failures occurred
+  if ((${#failed[@]} > 0)); then
+    exit 1
+  fi
+}
+
+main "$@"

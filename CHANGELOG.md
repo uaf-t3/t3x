@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- Overhauled the `t3x nodered` with new setup and sanity tools
+
+
 ### Changed
   - Added `script/zram-setup.sh` to enable zram and swap space. Trixie compatible fix.
   - Switched to apt install for starship
