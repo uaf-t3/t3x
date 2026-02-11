@@ -29,3 +29,6 @@ if [[ -f "$CHROME_HISTORY" ]]; then
 else
     echo "Chromium history file not found."
 fi
+
+# Delete keyrings
+sudo rm -f $HOME/.local/share/keyrings/*
