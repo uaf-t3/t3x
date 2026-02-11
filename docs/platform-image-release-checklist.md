@@ -8,5 +8,6 @@ Seed Checklist that works in tandem with [platform-image.md](https://github.com/
 - [ ] Ensure SSH is disabled
 - [ ] Ensure VNC is disabled
 - [ ] Ensure Node-RED is disabled on start
+- [ ] Clear Node-RED flows
 - [ ] Ensure you’ve not turned on or logged into anything
 - [ ] Clean up trash & other cruft that might be laying around
