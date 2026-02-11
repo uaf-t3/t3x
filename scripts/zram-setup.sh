@@ -30,25 +30,59 @@ else
   sudo chmod +x "$BIN_FILE"
 fi
 
-if [ ! -f /etc/rc.local ]; then
-  echo "Error: /etc/rc.local doesn't exist ... bonkers sauce"
-  exit 1
-fi
-
-if grep "$BIN_FILE" /etc/rc.local > /dev/null; then
-  echo "Skipping zram setup in rc.local -- already configured"
-else
-  #sudo sh -c "echo '$BIN_FILE &' >> /etc/rc.local"
-  sudo sed -i '/exit 0/i $BIN_FILE &' /etc/rc.local
-  if [ $? -eq 0 ] ; then
-    echo "Success: rc.local will call $BIN_FILE now"
-    echo "Reboot is needed now"
+if [ -f /etc/rc.local ]; then
+  if grep "$BIN_FILE" /etc/rc.local > /dev/null; then
+    echo "Skipping zram setup in rc.local -- already configured"
   else
-    echo "Failed to setup $BIN_FILE in /etc/rc.local"
-    echo "Fix it by manually doing the following steps"
-    echo "1) Add the following line to /etc/rc.local"
-    echo "   Warning: It needs to come before 'exit 0' (last line)"
-    echo "$BIN_FILE &"
-    echo "2) reboot and see if it worked"
+    #sudo sh -c "echo '$BIN_FILE &' >> /etc/rc.local"
+    sudo sed -i "/exit 0/i ${BIN_FILE} &" /etc/rc.local
+    if [ $? -eq 0 ] ; then
+      echo "Success: rc.local will call $BIN_FILE now"
+      echo "Reboot is needed now"
+    else
+      echo "Failed to setup $BIN_FILE in /etc/rc.local"
+      echo "Fix it by manually doing the following steps"
+      echo "1) Add the following line to /etc/rc.local"
+      echo "   Warning: It needs to come before 'exit 0' (last line)"
+      echo "$BIN_FILE &"
+      echo "2) reboot and see if it worked"
+    fi
+  fi
+else
+  echo "No such file: /etc/rc.local -- setting up using systemd instead"
+  
+
+  SERVICE_PATH="/etc/systemd/system/zram.service"
+
+  if [[ ! -f "$SERVICE_PATH" ]]; then
+    echo "Creating zram systemd service..."
+
+    sudo tee "$SERVICE_PATH" > /dev/null <<'EOF'
+[Unit]
+Description=Configure zram at boot
+DefaultDependencies=no
+After=local-fs.target
+Before=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/zram.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    echo "Reloading systemd..."
+    sudo systemctl daemon-reload
+
+    echo "Enabling zram.service..."
+    sudo systemctl enable zram.service
+
+    echo "Start the zram.service"
+    sudo systemctl start zram.service
+
+  else
+    echo "zram.service already exists. Skipping creation."
   fi
 fi

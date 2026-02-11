@@ -6,7 +6,8 @@ SCRIPT_DIR="$(cd "$( dirname "${BASH_SOURCE[0]}")" &> /dev/null & pwd )"
 
 #local FONTZIP_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip"
 #FONTZIP_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/Ubuntu.zip"
-FONTZIP_URL_DEFAULT="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/UbuntuMono.zip"
+#FONTZIP_URL_DEFAULT="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/UbuntuMono.zip"
+FONTZIP_URL_DEFAULT="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/UbuntuMono.zip"
 FONTZIP_URL=${1:-$FONTZIP_URL_DEFAULT}
 ZIPFILE=$(basename $FONTZIP_URL)
 FONTNAME=$(basename $ZIPFILE .zip)
@@ -30,7 +31,9 @@ if [ -f "$ZIPFILE" ]; then
 else
   echo "Starting download $FONTZIP_URL"
   wget --quiet "$FONTZIP_URL" 
-  if [ $? -ne 0 ]; then
+  if [ $? -eq 0 ]; then
+    echo "Download of font successful!"
+  else
     echo "Fatal: Download of font failed: wget $FONTZIP_URL"
     exit 1
   fi
@@ -83,4 +86,12 @@ if command -v lxterminal; then
   fi
 else
   echo "Skipping lxterminal configuration ... lxterminal is not installed"
+fi
+
+
+if command -v gucharmap > /dev/null; then # 🐼
+  echo "Skipping install: gucharmap already installed"
+else
+  echo "Missing gucharmap -- for finding all the pandas ... installing"
+  sudo apt install gucharmap
 fi

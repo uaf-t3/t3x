@@ -1,4 +1,3 @@
-fastfetch
 figlet
 toilet
 cowsay
@@ -17,3 +16,7 @@ netcat-openbsd
 lsof
 dnsutils
 npm
+slurp
+grim
+feh
+imagemagick

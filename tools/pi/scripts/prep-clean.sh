@@ -17,10 +17,10 @@ sudo rm -rf /var/log/*.gz /var/log/*.[0-9] /var/log/*.log
 # Optional: Clean package cache
 sudo apt clean
 
-# Zero-fill free space to make compression work better (optional but nice)
-sudo dd if=/dev/zero of=/EMPTY bs=1M || true
-sudo rm -f /EMPTY
-sync
+# Zero-fill free space to make compression work better (optional but nice) - takes several minutes
+# sudo dd if=/dev/zero of=/EMPTY bs=1M || true
+# sudo rm -f /EMPTY
+# sync
 
 # Delete Chromium history
 if [[ -f "$CHROME_HISTORY" ]]; then
@@ -29,3 +29,6 @@ if [[ -f "$CHROME_HISTORY" ]]; then
 else
     echo "Chromium history file not found."
 fi
+
+# Delete keyrings
+sudo rm -f $HOME/.local/share/keyrings/*

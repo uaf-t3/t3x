@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# AI (ChatGPT 5.2) Script for T3X
+set -euo pipefail
+
+# --- config ---
+DELAY=1
+QUALITY=92  # JPEG quality (1-100)
+STAMP="$(date '+%Y-%m-%d_%H-%M-%S')"
+BASENAME="snip_${STAMP}.jpg"
+
+# --- helpers ---
+need_cmd() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+fail() {
+  echo "snip: $*" >&2
+  exit 1
+}
+
+# --- verify dependencies ---
+need_cmd slurp   || fail "missing dependency: slurp (sudo apt install slurp)"
+need_cmd grim    || fail "missing dependency: grim (sudo apt install grim)"
+need_cmd convert || fail "missing dependency: imagemagick (sudo apt install imagemagick)"
+need_cmd feh     || fail "missing dependency: feh (sudo apt install feh)"
+
+# --- choose output directory ---
+OUTDIR="$HOME/Pictures"
+if [[ ! -d "$OUTDIR" ]]; then
+  OUTDIR="$HOME"
+fi
+
+OUTFILE="${OUTDIR}/${BASENAME}"
+
+# --- wait before snip ---
+sleep "$DELAY"
+
+# --- select region ---
+GEOM="$(slurp)" || fail "selection cancelled"
+
+# --- capture and convert ---
+TMPPNG="$(mktemp --suffix=.png)"
+cleanup() { rm -f "$TMPPNG"; }
+trap cleanup EXIT
+
+grim -g "$GEOM" "$TMPPNG"
+convert "$TMPPNG" -quality "$QUALITY" "$OUTFILE"
+
+echo "Saved to: $OUTFILE"
+
+# --- open with feh ---
+feh --auto-zoom --scale-down --image-bg black "$OUTFILE" &
