@@ -11,3 +11,4 @@ Seed Checklist that works in tandem with [platform-image.md](https://github.com/
 - [ ] Clear Node-RED flows
 - [ ] Ensure you’ve not turned on or logged into anything
 - [ ] Clean up trash & other cruft that might be laying around
+  - [ ] Ensure Trash Bin is empty
