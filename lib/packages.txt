@@ -18,3 +18,5 @@ dnsutils
 npm
 slurp
 grim
+feh
+imagemagick
