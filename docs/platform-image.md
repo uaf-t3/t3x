@@ -31,9 +31,10 @@
   - Bookmarks may be set to Node-Red Flow Editor (http://localhost:1880/), Node-Red Dashboard (http://localhost:1880/ui), and T3 Alaska (https://t3.alaska.edu/)
 
 - [ ] Change Wallpaper
+  - Place the wallpaper image in /home/pi. Name it something descriptive, like wallpaper.jpg.
   - Go to the start menu and click "Preferences > Appearance Settings".
-  - Click on “Picture” and select your desired wallpaper image.
-  - This menu can be used to change the OS theme (optional).
+  - Click on “Picture” and select your wallpaper.
+  - This menu can also be used to change the OS theme (optional).
      
 - [ ] Erase your footprints
   - Complete applicable steps from [Platform-Image-Release-Checklist](https://github.com/uaf-t3/t3x/blob/main/docs/platform-image-release-checklist.md).
