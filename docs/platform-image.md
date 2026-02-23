@@ -10,7 +10,7 @@
   - This allows Raspberry Pi to use more flash storage space as virtual memory, improving performance.
     
 - [ ] Enable I2C
-  - sudo raspi-config nonint do_i2c 0
+  - (preferences > interfaces > I2C) or use "sudo raspi-config nonint do_i2c 0"
   - This allows Raspberry Pi to use I2C sensors including BME280.
      
 - [ ] Install Node-RED
