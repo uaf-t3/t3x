@@ -119,16 +119,13 @@ function t3x_scripts_list() {
 function t3x_help_sub() {
   local base_dir="${1:-$SCRIPT_DIR}"
   local scripts_dir="$base_dir/scripts"
-  mapfile -t scripts < <(t3x_scripts_list "$base_dir")
-  for script in "${scripts[@]}"; do
-    local f="$scripts_dir/$script.sh"
-    [[ -f "$f" ]] || continue
-
+  t3x_scripts_list "$base_dir" | while IFS= read -r script; do
+    local fpath="$scripts_dir/$script.sh"
+    [[ -f "$fpath" ]] || continue
     # Only include files that contain the T3XHELP: flag
-    help=$(grep -m1 -F 'T3XHELP: ' "$f" | awk -F'T3XHELP: ' '{print $2; exit}')
+    help=$(grep -m1 -F 'T3XHELP: ' "$fpath" | awk -F'T3XHELP: ' '{print $2; exit}')
     [[ -n "$help" ]] || continue
-    printf " %-12s : " "$script" 
-    echo "$help"
+    printf " %-12s : %s\n" "$script" "$help"
   done
 }
 

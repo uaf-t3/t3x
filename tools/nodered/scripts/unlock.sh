@@ -1,20 +1,10 @@
 #!/usr/bin/env bash
+# T3XHELP: Enable remote Node-RED access and password protection.
 source $(t3x -T)
 
 # Define the path to the Node-RED settings file
 SETTINGS_FILE="$HOME/.node-red/settings.js"
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
-
-function nodered_restart_if_running
-{
-  if pgrep -x "node-red" >/dev/null; then
-    echo "Outdated Node-RED is still running. Attempting to restart..."
-    node-red-restart
-    echo "Node-RED configuration updated. Please verify that Node-RED is running locally as intended."
-  else
-    echo "Node-RED configuration updated. It will be applied when Node-RED is started."
-  fi
-}
 
 # tmp 1 = source, tmp 2 = destination
 cp "$SETTINGS_FILE" "$SETTINGS_FILE.tmp1"
@@ -34,7 +24,7 @@ if grep -q "/\*t3x_tag_pwAuth_begin" "$SETTINGS_FILE.tmp1" && grep -q "t3x_tag_p
     cp "$SETTINGS_FILE.tmp2" "$SETTINGS_FILE.tmp1" #update source
 else
     # preconfigured settings are not present
-    boom "unable to enable password authentication. Aborting unlock..."
+    boom "could not enable password authentication (it may already be unlocked). Aborting unlock..."
 fi
 
 #comment all uiHosts

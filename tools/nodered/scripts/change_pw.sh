@@ -1,19 +1,8 @@
 #!/usr/bin/env bash
-# T3XHELP: Change the remote Node-RED password (also requires unlock).
+# T3XHELP: Change the remote Node-RED password.
 # Define the path to the Node-RED settings file
 SETTINGS_FILE="$HOME/.node-red/settings.js"
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
-
-function nodered_restart_if_running
-{
-  if pgrep -x "node-red" >/dev/null; then
-    echo "Outdated Node-RED is still running. Attempting to restart..."
-    node-red-restart
-    echo "Node-RED configuration updated. Please verify that Node-RED is running locally as intended."
-  else
-    echo "Node-RED configuration updated. It will be applied when Node-RED is started."
-  fi
-}
 
 #get hash of password from user
 echo "Please enter a password for Node-RED:"
