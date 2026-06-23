@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# T3XDEV: Install preferred nodes with npm.
 SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE) > /dev/null; pwd)
 
 # ANSI color codes

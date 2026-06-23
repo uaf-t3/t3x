@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# T3XHELP: Change the remote Node-RED password (also requires unlock).
 # Define the path to the Node-RED settings file
 SETTINGS_FILE="$HOME/.node-red/settings.js"
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)

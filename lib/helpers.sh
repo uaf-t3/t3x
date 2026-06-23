@@ -103,22 +103,7 @@ function agree() {
   done
 }
 
-# ====== T3X Tool Discovery ======
-function t3x_tools_list() {
-  local dir="${1:-$T3X_SCRIPTS_DIR}/tools"
-  local tools=()
-  for tool in $(ls $dir/*/*.t3x 2>/dev/null | sort -n); do
-    tool_name=$(basename "$tool" .t3x)
-    tools+=("$tool_name")
-  done
-  [ ${#tools[@]} -eq 0 ] && return 1
-  echo "Tool(s) available:"
-  for t in "${tools[@]}"; do
-    help=$(grep T3XHELP $dir/*/$t.t3x | awk -F ': ' '{print $2}')
-    printf " %-12s : %s\n" "$t" "$help"
-  done
-}
-
+# ====== T3X Script Discovery ======
 function t3x_scripts_list() {
   local dir="${1:-$T3X_SCRIPTS_DIR}/scripts"
   debug "checking dir: $dir"

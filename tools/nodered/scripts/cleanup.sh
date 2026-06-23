@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# T3XHELP: Delete all flows.
 #Stops Node-RED Service
 sudo systemctl stop nodered
 

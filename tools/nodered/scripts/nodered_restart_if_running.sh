@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+# T3XDEV: Restart Node-RED if it is running.
 if pgrep -x "node-red" >/dev/null; then
     echo "Outdated Node-RED is still running. Attempting to restart..."
     node-red-restart

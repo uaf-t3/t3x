@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
+# T3XHELP: Install or update Node-RED, and preferred nodes.
 source $(t3x -E)
-
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)
 # Define the path to the template settings file for Node-RED
 SETTINGS_TEMPLATE="$SCRIPT_DIR/../files/node-red-default-settings.js"
