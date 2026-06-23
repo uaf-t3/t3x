@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-# T3XHELP: prompt help with commands: setup | launch
+# T3XHELP: Set up an enhanced terminal prompt.
 
 figlet "STARSHIP!!!" | lolcat
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)

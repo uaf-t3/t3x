@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# T3XHELP: t3 pi helper tools
+# T3XHELP: Utilities for configuring and cleaning Raspberry Pi.
 source $(t3x -T)
 debug "hi"
 TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)

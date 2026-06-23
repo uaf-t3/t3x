@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# T3XHELP: t3 dectalk
+# T3XHELP: Install dectalk to make your computer talk.
 source $(t3x -T)
 TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null; pwd)  

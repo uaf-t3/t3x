@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# T3XHELP: Install or modify Node-RED and nodes.
 source $(t3x -T)
 
 TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
