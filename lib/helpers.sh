@@ -105,23 +105,31 @@ function agree() {
 
 # ====== T3X Script Discovery ======
 function t3x_scripts_list() {
-  local dir="${1:-$T3X_SCRIPTS_DIR}/scripts"
-  debug "checking dir: $dir"
-  local scripts=()
-  for script in $(ls $dir/*.t3x 2>/dev/null | sort -n); do
-    script_name=$(basename "$script" .t3x)
-    scripts+=("$script_name")
+  local dir="${1}/scripts"
+  shopt -q nullglob
+  old=$?
+  shopt -s nullglob
+  debug "listing scripts form dir: $dir"
+  for script in "$dir"/*.sh; do
+    basename "$script" .sh
   done
-  echo "Script(s) available:"
-  for s in "${scripts[@]}"; do
-    help=$(grep T3XHELP $dir/$s.t3x | awk -F ': ' '{print $2}')
-    printf " %-12s : %s\n" "$s" "$help"
-  done
+  (( old == 0 )) || shopt -u nullglob
 }
 
 function t3x_help_sub() {
-  t3x_tools_list "$SCRIPT_DIR"
-  t3x_scripts_list "$SCRIPT_DIR"
+  local base_dir="${1:-$SCRIPT_DIR}"
+  local scripts_dir="$base_dir/scripts"
+  mapfile -t scripts < <(t3x_scripts_list "$base_dir")
+  for script in "${scripts[@]}"; do
+    local f="$scripts_dir/$script.sh"
+    [[ -f "$f" ]] || continue
+
+    # Only include files that contain the T3XHELP: flag
+    help=$(grep -m1 -F 'T3XHELP: ' "$f" | awk -F'T3XHELP: ' '{print $2; exit}')
+    [[ -n "$help" ]] || continue
+    printf " %-12s : " "$script" 
+    echo "$help"
+  done
 }
 
 # ====== Vegas Mode Utilities (Logging, State, Animations) ======

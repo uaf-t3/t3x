@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # T3XHELP: Install or modify Node-RED and nodes.
 source $(t3x -T)
+source $SCRIPT_DIR/../lib/t3ize.sh
 
 TOOL_NAME=$(basename "${BASH_SOURCE[0]}" .t3x)
 cowsay "Tool time with $TOOL_NAME" | lolcat
@@ -26,7 +27,7 @@ while [[ $# -gt 0 ]]; do
       echo "  change_pw       # change the login password used to log in from other devices"
       echo "  cleanup         # deletes flows.json and "resets" the Node-RED enviroment"
       echo 
-      t3x_scripts_list $SCRIPT_DIR
+      t3x_help_sub $SCRIPT_DIR
       exit 0
       ;;
     setup)
